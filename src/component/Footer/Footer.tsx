@@ -2,15 +2,28 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-gray-800 text-gray-300 py-6 px-8">
-      <div className="flex flex-col md:flex-row justify-between items-center">
-        <div className="text-xl font-bold">LOGO</div>
-        <div className="flex space-x-6 my-4 md:my-0">
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">YouTube</a>
+    <footer className="w-full bg-[#0b2239] text-gray-300 py-10 px-8">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-6">
+        {/* Logo */}
+        <div className="text-2xl font-bold">LOGO</div>
+
+        {/* Links */}
+        <div className="flex flex-col md:flex-row md:space-x-8 space-y-2 md:space-y-0 text-sm">
+          <a href="#">Điều khoản</a>
+          <a href="#">Chính sách</a>
+          <a href="#">Liên hệ</a>
         </div>
-        <div className="text-sm">© 2025 Title Of Destiny</div>
+
+        {/* Socials */}
+        <div className="flex space-x-4">
+          <a href="#">FB</a>
+          <a href="#">TW</a>
+          <a href="#">YT</a>
+        </div>
+      </div>
+
+      <div className="text-center text-xs mt-6">
+        © 2025 Title Of Destiny | TIDEPOD
       </div>
     </footer>
   );
