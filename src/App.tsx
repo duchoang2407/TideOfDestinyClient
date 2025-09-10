@@ -8,7 +8,7 @@ import MainLayout from "./layouts/MainLayout.tsx";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
-import ProtectedRoute from "./component/ProtectedRout.tsx";
+import ProtectedRoute from "./component/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
