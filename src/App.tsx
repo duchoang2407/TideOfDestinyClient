@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
 import GameIntroductionPage from "./pages/GameIntroductionPage.tsx";
 import ProtectedRoute from "./component/ProtectedRoute.tsx";
+import SystemRequirementPage from "./pages/SystemRequirementPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +27,8 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      { path: "/gameintroduction", element: <GameIntroductionPage /> }, // ✅ route mới
+      { path: "/gameintroduction", element: <GameIntroductionPage /> },
+      { path: "/systemrequirements", element: <SystemRequirementPage /> }, // ✅ route mới
       { path: "*", element: <Navigate to="/" /> },
     ],
   },

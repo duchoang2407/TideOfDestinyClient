@@ -30,7 +30,11 @@ const Header: React.FC = () => {
         {/* Buttons */}
         <div className="flex space-x-3">
           <button className="px-4 py-2 bg-yellow-500 rounded">Log in</button>
-          <button className="px-4 py-2 bg-blue-600 rounded">Tải game</button>
+          <a href="/systemrequirements">
+            <button className="px-4 py-2 bg-blue-600 rounded text-white font-bold">
+              Tải game
+            </button>
+          </a>
         </div>
       </nav>
     </header>
