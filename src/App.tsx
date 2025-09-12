@@ -8,6 +8,7 @@ import MainLayout from "./layouts/MainLayout.tsx";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
+import GameIntroductionPage from "./pages/GameIntroductionPage.tsx";
 import ProtectedRoute from "./component/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { path: "/gameintroduction", element: <GameIntroductionPage /> }, // ✅ route mới
       { path: "*", element: <Navigate to="/" /> },
     ],
   },

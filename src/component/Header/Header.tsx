@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   return (
@@ -10,19 +11,19 @@ const Header: React.FC = () => {
         {/* Menu */}
         <ul className="hidden md:flex space-x-8 font-medium">
           <li>
-            <a href="#" className="hover:text-yellow-400">
+            <Link to="/gameintroduction" className="hover:text-yellow-400">
               Giới thiệu game
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="hover:text-yellow-400">
+            <Link to="/events" className="hover:text-yellow-400">
               Thông tin sự kiện
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="hover:text-yellow-400">
+            <Link to="/contact" className="hover:text-yellow-400">
               Liên hệ
-            </a>
+            </Link>
           </li>
         </ul>
 
