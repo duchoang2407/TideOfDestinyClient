@@ -1,16 +1,15 @@
 import React from "react";
+import Footer from "../component/Footer/Footer";
 
 const HomePage: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-gray-100 text-gray-900 flex flex-col">
+      {/* Nội dung trang */}
       <main className="flex-1">
         {/* Banner */}
         <section className="relative w-full h-[400px] bg-[url('/banner.jpg')] bg-cover bg-center flex flex-col items-center justify-center text-white">
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 text-center">
-            <button className="bg-red-600 px-6 py-2 rounded-lg mb-6">
-              LOGO
-            </button>
             <h1 className="text-2xl font-bold mb-4">
               Ra mắt trên các nền tảng
             </h1>
@@ -60,6 +59,8 @@ const HomePage: React.FC = () => {
           </div>
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 };
