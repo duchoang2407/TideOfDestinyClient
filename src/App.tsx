@@ -6,11 +6,13 @@ import {
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout.tsx";
 import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-import GameIntroductionPage from "./pages/GameIntroductionPage.tsx";
-import ProtectedRoute from "./component/ProtectedRoute.tsx";
+import LoginPage from "./pages/Login/LoginPage.tsx";
+
+import GameIntroductionPage from "./pages/GameIntroduction/GameIntroductionPage.tsx";
 import SystemRequirementPage from "./pages/SystemRequirementPage.tsx";
+import NewsPage from "./pages/News/NewsPage.tsx";
+import ContactPage from "./pages/ContactPage/ContactPage.tsx";
+import NewsDetailPage from "./pages/News/NewsDetailPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -19,16 +21,12 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
-      {
-        path: "/dashboard",
-        element: (
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        ),
-      },
+
       { path: "/gameintroduction", element: <GameIntroductionPage /> },
-      { path: "/systemrequirements", element: <SystemRequirementPage /> }, // ✅ route mới
+      { path: "/systemrequirements", element: <SystemRequirementPage /> },
+      { path: "/newspage", element: <NewsPage /> },
+      { path: "/contact", element: <ContactPage /> },
+      { path: "/news/:version", element: <NewsDetailPage /> },
       { path: "*", element: <Navigate to="/" /> },
     ],
   },

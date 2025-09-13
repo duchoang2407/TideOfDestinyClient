@@ -1,6 +1,6 @@
 import React from "react";
 // Import header chung
-import Footer from "../component/Footer/Footer"; // Import footer chung
+import Footer from "../../component/Footer/Footer"; // Import footer chung
 
 const GameIntroductionPage: React.FC = () => {
   return (
