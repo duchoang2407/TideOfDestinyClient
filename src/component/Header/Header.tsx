@@ -6,7 +6,11 @@ const Header: React.FC = () => {
     <header className="w-full bg-[#0b2239] text-white">
       <nav className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         {/* Logo */}
-        <div className="text-2xl font-bold">LOGO</div>
+        <div>
+          <Link to="/" className="text-2xl font-bold">
+            LOGO
+          </Link>
+        </div>
 
         {/* Menu */}
         <ul className="hidden md:flex space-x-8 font-medium">
@@ -16,7 +20,7 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/events" className="hover:text-yellow-400">
+            <Link to="/newspage" className="hover:text-yellow-400">
               Thông tin sự kiện
             </Link>
           </li>
@@ -29,7 +33,9 @@ const Header: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex space-x-3">
-          <button className="px-4 py-2 bg-yellow-500 rounded">Log in</button>
+          <Link to="/login">
+            <button className="px-4 py-2 bg-yellow-500 rounded">Log in</button>
+          </Link>
           <a href="/systemrequirements">
             <button className="px-4 py-2 bg-blue-600 rounded text-white font-bold">
               Tải game
