@@ -9,7 +9,7 @@ const LoginFooter = () => {
       <img
         src={solder1}
         alt="Solder"
-        className="absolute bottom-20  left-0 h-[300px] object-contain"
+        className="absolute bottom-20  left-0 h-[250px] object-contain"
       />
 
       {/* Ảnh phụ nữ bên phải */}
