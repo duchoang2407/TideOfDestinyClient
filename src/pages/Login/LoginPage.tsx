@@ -1,29 +1,63 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../../component/Footer/LoginFooter";
+import { jwtDecode } from "jwt-decode";
+
+interface JwtPayload {
+  name: string;
+  role: string;
+  exp: number;
+  iat: number;
+}
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login with:", { username, password });
-    // TODO: gọi API login
+
+    try {
+      const response = await fetch("http://localhost:5168/api/Auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) throw new Error("Sai tài khoản hoặc mật khẩu");
+
+      const data = await response.json();
+      console.log("Login response:", data);
+
+      const token = data.token;
+      localStorage.setItem("token", token);
+
+      // Decode token để lấy role
+      const decoded: JwtPayload = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+
+      localStorage.setItem("role", decoded.role);
+
+      // Điều hướng theo role
+      if (decoded.role === "Admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/player/home");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   return (
     <div className="w-full min-h-screen bg-[#c4a875] flex flex-col">
-      {/* Nội dung chính */}
       <div className="flex flex-1 relative">
-        {/* Form login */}
         <div className="flex-1 flex items-center justify-center">
           <form
             onSubmit={handleLogin}
             className="bg-[#2f3315] text-white p-8 rounded-lg shadow-lg w-[600px] relative"
           >
-            {/* Nút X (close) */}
             <Link to="/">
               <button
                 type="button"
@@ -66,7 +100,6 @@ const LoginPage: React.FC = () => {
               Đăng nhập
             </button>
 
-            {/* Extra links */}
             <div className="flex justify-between text-sm mt-4">
               <Link
                 to="/ForgotPasswordPage"
@@ -84,8 +117,6 @@ const LoginPage: React.FC = () => {
           </form>
         </div>
       </div>
-
-      {/* Footer */}
       <LoginFooter />
     </div>
   );

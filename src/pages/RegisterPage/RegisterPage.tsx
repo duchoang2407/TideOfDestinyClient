@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
+import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../../component/Footer/LoginFooter";
 
 const RegisterPage: React.FC = () => {
@@ -8,8 +8,9 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -17,8 +18,34 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    console.log("Register with:", { username, password, email });
-    // TODO: gọi API đăng ký
+    try {
+      const response = await fetch("http://localhost:5168/api/Auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          confirmPassword, // thêm vào
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Chi tiết lỗi:", errorData);
+        throw new Error("Đăng ký thất bại");
+      }
+
+      const data = await response.json();
+      console.log("Đăng ký thành công:", data);
+      alert("Đăng ký thành công!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during register:", error);
+      alert("Đăng ký thất bại!");
+    }
   };
 
   return (
