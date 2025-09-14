@@ -13,6 +13,8 @@ import SystemRequirementPage from "./pages/SystemRequirementPage.tsx";
 import NewsPage from "./pages/News/NewsPage.tsx";
 import ContactPage from "./pages/ContactPage/ContactPage.tsx";
 import NewsDetailPage from "./pages/News/NewsDetailPage.tsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage.tsx";
+import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ const router = createBrowserRouter([
       { path: "/newspage", element: <NewsPage /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/news/:version", element: <NewsDetailPage /> },
+      { path: "/forgotpasswordpage", element: <ForgotPasswordPage /> },
+      { path: "/registerpage", element: <RegisterPage /> },
       { path: "*", element: <Navigate to="/" /> },
     ],
   },
