@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../../component/Footer/LoginFooter";
 import { jwtDecode } from "jwt-decode";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface JwtPayload {
   name: string;
@@ -49,6 +50,39 @@ const LoginPage: React.FC = () => {
       alert(err.message);
     }
   };
+
+  // const handleGoogleSuccess = async (credentialResponse: any) => {
+  //   if (credentialResponse.credential) {
+  //     try {
+  //       // Gửi ID token của Google về backend
+  //       const response = await fetch(
+  //         "http://localhost:5168/api/Auth/google-login",
+  //         {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify({ token: credentialResponse.credential }),
+  //         }
+  //       );
+
+  //       if (!response.ok) throw new Error("Google login thất bại");
+
+  //       const data = await response.json();
+  //       localStorage.setItem("token", data.token);
+
+  //       const decoded: JwtPayload = jwtDecode(data.token);
+  //       localStorage.setItem("role", decoded.role);
+
+  //       if (decoded.role === "Admin") navigate("/admin/dashboard");
+  //       else navigate("/player/home");
+  //     } catch (err: any) {
+  //       alert(err.message);
+  //     }
+  //   }
+  // };
+
+  // const handleGoogleError = () => {
+  //   alert("Google login thất bại!");
+  // };
 
   return (
     <div className="w-full min-h-screen bg-[#c4a875] flex flex-col">
@@ -99,6 +133,13 @@ const LoginPage: React.FC = () => {
             >
               Đăng nhập
             </button>
+            {/* Nút login bằng Google */}
+            {/* <div className="flex justify-center mb-4 mt-4">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+              />
+            </div> */}
 
             <div className="flex justify-between text-sm mt-4">
               <Link
