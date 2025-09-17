@@ -15,7 +15,7 @@ import ContactPage from "./pages/ContactPage/ContactPage.tsx";
 import NewsDetailPage from "./pages/News/NewsDetailPage.tsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage.tsx";
 import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 // import các component cần bảo vệ
 import PrivateRoute from "./component/PrivateRoute/PrivateRoute.tsx";
 // import AdminDashboard from "./pages/Admin/AdminDashboard.tsx";
@@ -60,7 +60,11 @@ const router = createBrowserRouter([
 ]);
 
 const App: React.FC = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
+  );
 };
 
 export default App;
