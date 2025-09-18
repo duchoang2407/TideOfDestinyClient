@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../../component/Footer/LoginFooter";
+import axiosInstance from "../../component/config/axiosConfig";
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -19,30 +19,17 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5168/api/Auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          confirmPassword, // thêm vào
-        }),
+      const response = await axiosInstance.post("/Auth/register", {
+        username,
+        email,
+        password,
+        confirmPassword,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Chi tiết lỗi:", errorData);
-        throw new Error("Đăng ký thất bại");
-      }
-
-      const data = await response.json();
-      console.log("Đăng ký thành công:", data);
+      console.log("Đăng ký thành công:", response.data);
       alert("Đăng ký thành công!");
       navigate("/login");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during register:", error);
       alert("Đăng ký thất bại!");
     }
@@ -50,15 +37,12 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#c4a875] flex flex-col">
-      {/* Nội dung chính */}
       <div className="flex flex-1 relative">
-        {/* Form đăng ký */}
         <div className="flex-1 flex items-center justify-center">
           <form
             onSubmit={handleRegister}
             className="bg-[#2f3315] text-white p-8 rounded-lg shadow-lg w-[600px] relative"
           >
-            {/* Nút X (close) */}
             <Link to="/">
               <button
                 type="button"
@@ -148,7 +132,6 @@ const RegisterPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <LoginFooter />
     </div>
   );

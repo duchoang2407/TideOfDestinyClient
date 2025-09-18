@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginFooter from "../../component/Footer/LoginFooter";
 import { jwtDecode } from "jwt-decode";
-import { GoogleLogin } from "@react-oauth/google";
+// import { GoogleLogin } from "@react-oauth/google";
+import axiosInstance from "../../component/config/axiosConfig";
 
 interface JwtPayload {
   name: string;
@@ -15,20 +16,15 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5168/api/Auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      const response = await axiosInstance.post("/Auth/login", {
+        username,
+        password,
       });
-
-      if (!response.ok) throw new Error("Sai tài khoản hoặc mật khẩu");
-
-      const data = await response.json();
+      const data = response.data;
       console.log("Login response:", data);
 
       const token = data.token;
@@ -47,7 +43,7 @@ const LoginPage: React.FC = () => {
         navigate("/player/home");
       }
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || "Đăng nhập thất bại");
     }
   };
 
