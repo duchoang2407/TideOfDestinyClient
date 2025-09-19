@@ -1,5 +1,6 @@
 import women1 from "../../assest/women1.png";
 import solder1 from "../../assest/solder1.png";
+import React from "react";
 
 const LoginFooter = () => {
   return (
