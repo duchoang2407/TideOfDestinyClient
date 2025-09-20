@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 
-const httpsBaseUrl = "https://localhost:7256/api";
-const httpBaseUrl = "http://localhost:5168/api";
+const httpsBaseUrl = "https://localhost:7256";
+const httpBaseUrl = "http://localhost:5168";
 
 const axiosInstance = axios.create({
   baseURL: httpsBaseUrl,
