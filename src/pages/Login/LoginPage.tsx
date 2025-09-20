@@ -17,6 +17,7 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -36,6 +37,7 @@ const LoginPage: React.FC = () => {
       console.log("Decoded token:", decoded);
 
       localStorage.setItem("role", decoded.role);
+      localStorage.setItem("username", decoded.name);
 
       // Điều hướng theo role
       if (decoded.role === "Admin") {
