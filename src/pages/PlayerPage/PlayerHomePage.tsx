@@ -1,12 +1,12 @@
 import React from "react";
-import Footer from "../component/Footer/Footer";
-import BG from "../assest/bg.png";
-import epicgames from "../assest/epicgames.svg";
-import steam from "../assest/steam.svg";
-import bg2 from "../assest/bg2.png";
-import bg3 from "../assest/bg3.png";
+import Footer from "../../component/Footer/Footer";
+import BG from "../../assest/bg.png";
+import epicgames from "../../assest/epicgames.svg";
+import steam from "../../assest/steam.svg";
+import bg2 from "../../assest/bg2.png";
+import bg3 from "../../assest/bg3.png";
 
-const HomePage: React.FC = () => {
+const PlayerHomePage: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-gray-100 text-gray-900 flex flex-col">
       {/* Nội dung trang */}
@@ -129,4 +129,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default PlayerHomePage;
