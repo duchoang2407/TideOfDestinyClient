@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
 
       // Điều hướng theo role
       if (decoded.role === "Admin") {
-        navigate("/admin/dashboard");
+        navigate("/admin");
       } else {
         navigate("/player/home");
       }

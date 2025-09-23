@@ -15,13 +15,20 @@ import ContactPage from "./pages/ContactPage/ContactPage.tsx";
 import NewsDetailPage from "./pages/News/NewsDetailPage.tsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage.tsx";
 import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
+import AdminHeader from "./component/Header/AdminHeader.tsx";
+import AdminHomePage from "./pages/Admin/AdminHomePage.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
 // import các component cần bảo vệ
 import PrivateRoute from "./component/PrivateRoute/PrivateRoute.tsx";
-// import AdminDashboard from "./pages/Admin/AdminDashboard.tsx";
+
+// Admin pages
 import PlayerHome from "./pages/PlayerPage/PlayerHomePage.tsx";
+import GameIntroduction from "./pages/Admin/AdminManager/GameIntroduction.js";
+import UpdateInformation from "./pages/Admin/AdminManager/UpdateInformation.tsx"; // <- bạn cần tạo file này
 
 const router = createBrowserRouter([
+  // Route chính cho Player/User
   {
     path: "/",
     element: <MainLayout />,
@@ -36,15 +43,7 @@ const router = createBrowserRouter([
       { path: "/forgotpasswordpage", element: <ForgotPasswordPage /> },
       { path: "/registerpage", element: <RegisterPage /> },
 
-      // các route cần role
-      // {
-      //   path: "/admin/dashboard",
-      //   element: (
-      //     <PrivateRoute role="Admin">
-      //       <AdminDashboard />
-      //     </PrivateRoute>
-      //   ),
-      // },
+      // Route cho Player
       {
         path: "/player/home",
         element: (
@@ -56,6 +55,41 @@ const router = createBrowserRouter([
 
       { path: "*", element: <Navigate to="/" /> },
     ],
+  },
+
+  // Route riêng cho Admin
+  {
+    path: "/admin",
+    element: (
+      <PrivateRoute role="Admin">
+        <>
+          <AdminHeader />
+          <AdminHomePage />
+        </>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/admin/game",
+    element: (
+      <PrivateRoute role="Admin">
+        <>
+          <AdminHeader />
+          <GameIntroduction />
+        </>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/admin/update",
+    element: (
+      <PrivateRoute role="Admin">
+        <>
+          <AdminHeader />
+          <UpdateInformation />
+        </>
+      </PrivateRoute>
+    ),
   },
 ]);
 
