@@ -44,26 +44,27 @@ const NewsPage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#c4a875] flex flex-col">
-      {/* Main */}
       <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold text-center mb-8">
           THÔNG TIN CẬP NHẬT
         </h1>
-        <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-          {/* ✅ chỉ render 3 item trong trang */}
+
+        <div className="flex flex-col gap-8 max-w-4xl mx-auto">
           {currentData.map((update, i) => (
             <div
               key={i}
-              onClick={() => navigate(`/news/${update.version}`)} // 👉 điều hướng sang detail
-              className="flex bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
+              onClick={() => navigate(`/news/${update.version}`)}
+              className="relative flex items-stretch cursor-pointer"
             >
-              {/* Version badge */}
-              <div className="bg-[#3a4d28] text-yellow-300 font-bold text-xl flex items-center justify-center px-6 py-10">
+              {/* Version block */}
+              <div className="relative bg-[#3a4d28] text-yellow-300 font-bold text-lg flex items-center justify-center px-6 py-8 rounded-l-2xl shadow-md">
                 {update.version}
+                {/* “tai” nhô ra */}
+                <div className="absolute right-0 top-0 h-full w-6 bg-[#3a4d28] rounded-r-2xl"></div>
               </div>
 
-              {/* Content */}
-              <div className="flex-1 p-6">
+              {/* Content card */}
+              <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition">
                 <ul className="list-disc list-inside space-y-2 text-gray-800">
                   {update.items.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -73,13 +74,12 @@ const NewsPage: React.FC = () => {
             </div>
           ))}
 
-          {/* ✅ Pagination nhận tổng số trang, không phải tổng số sản phẩm */}
+          {/* Pagination */}
           <div className="flex justify-center">
             <Pagination total={totalPages} current={page} onChange={setPage} />
           </div>
         </div>
       </main>
-      {/* Footer */}
       <Footer />
     </div>
   );
