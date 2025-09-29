@@ -2,10 +2,11 @@ import axios, { AxiosError } from "axios";
 
 const httpsBaseUrl = "https://localhost:7256/api";
 const httpBaseUrl = "http://localhost:5168/api";
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Tạo instance mặc định HTTPS
 const axiosInstance = axios.create({
-  baseURL: httpsBaseUrl,
+  baseURL: envBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../../component/config/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface JwtPayload {
   name: string;
@@ -16,6 +17,8 @@ interface LoginModalProps {
   onOpenRegister: () => void;
   onOpenForgotPassword: () => void;
 }
+
+const ENVBASEURL = import.meta.env.VITE_API_BASE_URL;
 
 const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
@@ -63,6 +66,46 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (credentialResponse.credential) {
+      const idToken = credentialResponse.credential;
+      try {
+        // Gửi ID token của Google về backend
+        const response = await fetch(
+          `${ENVBASEURL}/Auth/google-login`, // Đảm bảo URL này đúng
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken: idToken }), // Gửi đúng DTO
+          }
+        );
+
+        if (!response.ok) throw new Error("Google login thất bại ở backend.");
+
+        const data = await response.json();
+        const token = data.token; // Đây là token của hệ thống bạn
+        localStorage.setItem("token", token);
+
+        const decoded: JwtPayload = jwtDecode(token);
+        localStorage.setItem("role", decoded.role);
+        localStorage.setItem("username", decoded.name);
+
+        if (decoded.role === "Admin") {
+          navigate("/admin");
+        } else {
+          navigate("/player/home");
+        }
+        onClose(); // Đóng modal sau khi thành công
+      } catch (err: any) {
+        alert(err.message);
+      }
+    }
+  };
+
+  const handleGoogleError = () => {
+    alert("Google login thất bại!");
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-[#2f3315] text-white p-8 rounded-lg shadow-lg w-[500px] relative">
@@ -108,6 +151,13 @@ const LoginModal: React.FC<LoginModalProps> = ({
             Đăng nhập
           </button>
         </form>
+
+        <div className="flex justify-center my-4">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+          />
+        </div>
 
         <div className="flex justify-between text-sm mt-4">
           <button

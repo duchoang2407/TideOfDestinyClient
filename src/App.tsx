@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [isForgotOpen, setForgotOpen] = useState(false);
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+    <GoogleOAuthProvider clientId="467475853265-i7sdj6otkta2r2o6mpbe1lc8rosea8ep.apps.googleusercontent.com">
       <BrowserRouter>
         <Routes>
           {/* User routes */}
