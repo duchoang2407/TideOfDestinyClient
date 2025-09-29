@@ -18,6 +18,8 @@ interface LoginModalProps {
   onOpenForgotPassword: () => void;
 }
 
+const ENVBASEURL = import.meta.env.VITE_API_BASE_URL;
+
 const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
@@ -70,7 +72,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
       try {
         // Gửi ID token của Google về backend
         const response = await fetch(
-          "http://localhost:5168/api/Auth/google-login", // Đảm bảo URL này đúng
+          `${ENVBASEURL}/Auth/google-login`, // Đảm bảo URL này đúng
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
