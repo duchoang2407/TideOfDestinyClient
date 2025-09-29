@@ -1,10 +1,11 @@
 import axios, { AxiosError } from "axios";
 
-const httpsBaseUrl = "https://localhost:7256";
-const httpBaseUrl = "http://localhost:5168";
+const httpsBaseUrl = "https://localhost:7256/api";
+const httpBaseUrl = "http://localhost:5168/api";
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({
-  baseURL: httpsBaseUrl,
+  baseURL: envBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,21 +14,14 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // Nếu HTTPS fail -> thử HTTP
     if (
       error.code === "ERR_NETWORK" &&
       error.config?.baseURL === httpsBaseUrl
     ) {
       console.warn("⚠️ HTTPS không chạy, fallback sang HTTP");
       error.config.baseURL = httpBaseUrl;
-
-      try {
-        return await axios.request(error.config); // gọi lại bằng HTTP
-      } catch (retryError) {
-        return Promise.reject(retryError);
-      }
+      return axios.request(error.config);
     }
-
     return Promise.reject(error);
   }
 );
