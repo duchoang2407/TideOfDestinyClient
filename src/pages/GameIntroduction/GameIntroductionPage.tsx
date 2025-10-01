@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Footer from "../../component/Footer/Footer";
 import axiosInstance from "../../component/config/axiosConfig";
 
 interface NewsItem {
@@ -14,25 +13,24 @@ const GameIntroductionPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchIntro = async () => {
       try {
-        const response = await axiosInstance.get("/News");
-        console.log("News response:", response.data);
+        const response = await axiosInstance.get("/News", {
+          params: { category: 1 }, // ✅ Game Introduction
+        });
         setNews(response.data);
       } catch (error: any) {
-        console.error("Error fetching news:", error.message);
+        console.error("Error fetching game intro:", error.message);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchNews();
+    fetchIntro();
   }, []);
 
   return (
     <div className="bg-[#f5e9d7] min-h-screen flex flex-col">
       <main className="max-w-5xl mx-auto py-12 px-4 flex-grow">
-        {/* Tiêu đề */}
         <h1 className="text-center text-4xl font-bold mb-14 text-[#7d4b00] underline decoration-2">
           GIỚI THIỆU
         </h1>
@@ -47,7 +45,6 @@ const GameIntroductionPage: React.FC = () => {
               key={item.id}
               className="grid md:grid-cols-2 gap-10 mb-16 items-center"
             >
-              {/* Ảnh (so le) */}
               {item.imageUrl && (
                 <img
                   src={item.imageUrl}
@@ -57,8 +54,6 @@ const GameIntroductionPage: React.FC = () => {
                   }`}
                 />
               )}
-
-              {/* Box nội dung */}
               <div
                 className={`bg-[#d8c4a6] p-8 rounded-2xl shadow-lg ${
                   index % 2 === 1 ? "order-1 md:order-2" : ""
@@ -75,8 +70,6 @@ const GameIntroductionPage: React.FC = () => {
           ))
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };
