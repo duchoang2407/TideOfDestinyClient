@@ -4,7 +4,7 @@ const httpsBaseUrl = "https://localhost:7256/api";
 const httpBaseUrl = "http://localhost:5168/api";
 const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-// Tạo instance mặc định HTTPS
+// Tạo instance mặc định
 const axiosInstance = axios.create({
   baseURL: envBaseUrl,
   headers: {
@@ -12,7 +12,25 @@ const axiosInstance = axios.create({
   },
 });
 
-// Interceptor để fallback HTTP khi HTTPS lỗi
+// ✅ Thêm token vào tất cả request
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  // Debug log
+  console.log("📡 Request:", {
+    url: config.url,
+    method: config.method,
+    headers: config.headers,
+    data: config.data,
+  });
+
+  return config;
+});
+
+// ✅ Fallback HTTPS → HTTP
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -22,7 +40,7 @@ axiosInstance.interceptors.response.use(
     ) {
       console.warn("⚠️ HTTPS không chạy, fallback sang HTTP");
       error.config.baseURL = httpBaseUrl;
-      return axios.request(error.config); // gọi lại bằng HTTP
+      return axios.request(error.config);
     }
     return Promise.reject(error);
   }
