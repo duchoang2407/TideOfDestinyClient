@@ -3,41 +3,50 @@ import React, { useState } from "react";
 interface AddModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    title: string;
-    content: string;
-    imageUrl?: string;
-    newsCategory: number;
-  }) => void;
+  onSubmit: (data: FormData) => void; // 👈 nhận FormData thay vì object string
 }
 
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    imageUrl: "",
-    newsCategory: 1,
-  });
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [newsCategory, setNewsCategory] = useState(1);
 
   if (!isOpen) return null;
 
-  // 👉 Hàm lấy file từ máy
+  // 👉 lấy file ảnh từ input
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Tạo URL tạm để preview
-    const localUrl = URL.createObjectURL(file);
-    setFormData({ ...formData, imageUrl: localUrl });
-
-    console.log("File được chọn:", file);
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file)); // chỉ để preview
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("Title", title);
+    formData.append("Content", content);
+    formData.append("NewsCategory", newsCategory.toString());
+
+    if (imageFile) {
+      formData.append("ImageUrl", imageFile); // 👈 backend yêu cầu binary
+    } else {
+      formData.append("ImageUrl", ""); // 👈 nếu không có file thì gửi rỗng
+    }
+
     onSubmit(formData);
     onClose();
-    setFormData({ title: "", content: "", imageUrl: "", newsCategory: 1 });
+
+    // reset
+    setTitle("");
+    setContent("");
+    setImageFile(null);
+    setPreviewUrl(null);
+    setNewsCategory(1);
   };
 
   return (
@@ -59,28 +68,15 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
             <input
               type="text"
               className="w-full px-3 py-2 border rounded"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
             />
           </div>
 
-          {/* Link ảnh */}
+          {/* Chọn ảnh */}
           <div>
-            <label className="block font-semibold text-black">Link Ảnh:</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
-              }
-              placeholder="Dán link ảnh hoặc chọn file bên dưới"
-            />
-
-            {/* Nút chọn file ảnh */}
+            <label className="block font-semibold text-black">Ảnh:</label>
             <input
               type="file"
               accept="image/png, image/jpeg, image/gif"
@@ -90,11 +86,11 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
           </div>
 
           {/* Preview ảnh */}
-          {formData.imageUrl && (
+          {previewUrl && (
             <div>
               <p className="text-sm text-black">Xem trước:</p>
               <img
-                src={formData.imageUrl}
+                src={previewUrl}
                 alt="preview"
                 className="w-40 h-auto rounded"
               />
@@ -106,32 +102,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
             <label className="block font-semibold text-black">Nội Dung:</label>
             <textarea
               className="w-full px-3 py-2 border rounded h-28"
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               required
             />
-          </div>
-
-          {/* Loại hiển thị */}
-          <div>
-            <label className="block font-semibold text-black">
-              Loại hiển thị:
-            </label>
-            <select
-              className="w-full px-3 py-2 border rounded"
-              value={formData.newsCategory}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  newsCategory: Number(e.target.value),
-                })
-              }
-            >
-              <option value={0}>Update</option>
-              <option value={1}>News</option>
-            </select>
           </div>
 
           {/* Submit */}
