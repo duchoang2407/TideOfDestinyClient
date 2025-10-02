@@ -8,7 +8,7 @@ interface EditModalProps {
     title: string;
     content: string;
     imageUrl?: string | null;
-    newsCategory?: number; // 👈 thêm newsCategory
+    newsCategory?: number;
   } | null;
   onSubmit: (data: {
     id: string;
@@ -47,6 +47,15 @@ const EditModal: React.FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
+  // 👉 Hàm đổi ảnh từ file
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const localUrl = URL.createObjectURL(file);
+    setFormData({ ...formData, imageUrl: localUrl });
+    console.log("Ảnh mới:", file);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -67,6 +76,7 @@ const EditModal: React.FC<EditModalProps> = ({
         <h2 className="text-xl font-bold mb-4 text-black">Edit Information</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {/* Tiêu đề */}
           <div>
             <label className="block font-semibold text-black">Tiêu Đề:</label>
             <input
@@ -80,6 +90,7 @@ const EditModal: React.FC<EditModalProps> = ({
             />
           </div>
 
+          {/* Ảnh */}
           <div>
             <label className="block font-semibold text-black">Ảnh:</label>
             <input
@@ -89,9 +100,29 @@ const EditModal: React.FC<EditModalProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
+              placeholder="Nhập link ảnh hoặc chọn file bên dưới"
             />
+
+            <input
+              type="file"
+              accept="image/png, image/jpeg, image/gif"
+              onChange={handleImageChange}
+              className="mt-2"
+            />
+
+            {formData.imageUrl && (
+              <div className="mt-2">
+                <p className="text-sm text-black">Xem trước:</p>
+                <img
+                  src={formData.imageUrl}
+                  alt="preview"
+                  className="w-40 h-auto rounded"
+                />
+              </div>
+            )}
           </div>
 
+          {/* Nội dung */}
           <div>
             <label className="block font-semibold text-black">Nội Dung:</label>
             <textarea
@@ -104,7 +135,7 @@ const EditModal: React.FC<EditModalProps> = ({
             />
           </div>
 
-          {/* 👇 Dropdown chọn loại hiển thị */}
+          {/* Loại hiển thị */}
           <div>
             <label className="block font-semibold text-black">
               Loại hiển thị:
@@ -120,8 +151,7 @@ const EditModal: React.FC<EditModalProps> = ({
               }
             >
               <option value={0}>Update</option>
-              <option value={1}>News</option>
-              <option value={2}>Hiển thị cả 2</option>
+              <option value={1}>News</option>\
             </select>
           </div>
 

@@ -1,45 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import Footer from "../../component/Footer/Footer";
-// import { Link } from "react-router-dom";
+import axiosInstance from "../../component/config/axiosConfig";
 
-// 🔹 Data giả (sau này bạn có thể import từ file chung)
-const updates = [
-  {
-    version: "v0.2.8",
-    date: "25-02-2025",
-    items: [
-      "Fix lỗi khi thay bằng đạn.",
-      "Fix bug góc lag.",
-      "Thêm hướng dẫn khi bắn súng.",
-      "Thay đổi một quest và main quest của nhân vật Lập.",
-      "Thêm hệ thống hồi máu và tự điểm hồi sinh.",
-    ],
-  },
-  {
-    version: "v0.2",
-    date: "10-01-2025",
-    items: [
-      "Thêm vũ khí mới, bảng đạn.",
-      "Thêm các kỹ năng đặc trưng của nhân vật.",
-      "Fix lỗi khi vào Quest.",
-      "Fix lỗi map khi load vào game.",
-    ],
-  },
-];
+interface NewsItem {
+  id: number;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  publishedAt?: string;
+}
 
 const NewsDetailPage: React.FC = () => {
-  const { version } = useParams<{ version: string }>(); // lấy param từ URL
+  const { id } = useParams<{ id: string }>(); // lấy id từ URL
   const navigate = useNavigate();
+  const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // tìm dữ liệu theo version
-  const update = updates.find((u) => u.version === version);
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        if (!id) return;
+        const res = await axiosInstance.get(`/News/${id}`);
+        setNewsItem(res.data);
+      } catch (err) {
+        console.error("❌ Fetch detail error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [id]);
 
-  if (!update) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#c4a875]">
-        <p className="text-xl">Không tìm thấy thông tin cập nhật</p>
+        <p className="text-xl">Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
+  if (!newsItem) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#c4a875]">
+        <p className="text-xl">Không tìm thấy thông tin</p>
       </div>
     );
   }
@@ -57,32 +61,33 @@ const NewsDetailPage: React.FC = () => {
 
         {/* Title */}
         <h1 className="text-center text-3xl font-bold mb-8">
-          THÔNG TIN CẬP NHẬT
+          {newsItem.title}
         </h1>
 
         {/* Card */}
         <div className="bg-[#2f3315] p-6 rounded-2xl shadow-lg">
-          {/* Version */}
-          <div className="bg-[#3a4d28] text-yellow-300 font-bold text-xl text-center py-3 rounded-md mb-6">
-            {update.version}
-          </div>
-
           {/* Content */}
           <div className="bg-white p-6 rounded-xl">
-            <p className="text-right text-sm text-gray-600 mb-4">
-              {update.date}
+            {newsItem.publishedAt && (
+              <p className="text-right text-sm text-gray-600 mb-4">
+                {new Date(newsItem.publishedAt).toLocaleDateString("vi-VN")}
+              </p>
+            )}
+
+            {newsItem.imageUrl && (
+              <img
+                src={newsItem.imageUrl}
+                alt={newsItem.title}
+                className="w-full h-64 object-cover rounded-lg mb-4"
+              />
+            )}
+
+            <p className="text-gray-800 whitespace-pre-line">
+              {newsItem.content}
             </p>
-            <ul className="list-disc list-inside space-y-2 text-gray-800">
-              {update.items.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

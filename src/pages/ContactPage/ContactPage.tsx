@@ -54,8 +54,6 @@ const ContactPage: React.FC = () => {
           </button>
         </form>
       </main>
-
-      <Footer />
     </div>
   );
 };

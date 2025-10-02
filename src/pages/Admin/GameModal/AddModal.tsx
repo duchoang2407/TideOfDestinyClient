@@ -16,23 +16,33 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
     title: "",
     content: "",
     imageUrl: "",
-    newsCategory: 1, // mặc định là News
+    newsCategory: 1,
   });
 
   if (!isOpen) return null;
+
+  // 👉 Hàm lấy file từ máy
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Tạo URL tạm để preview
+    const localUrl = URL.createObjectURL(file);
+    setFormData({ ...formData, imageUrl: localUrl });
+
+    console.log("File được chọn:", file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
     onClose();
-    // reset lại form
     setFormData({ title: "", content: "", imageUrl: "", newsCategory: 1 });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-[#e8c07a] rounded-xl p-6 w-[400px] shadow-lg relative">
-        {/* Close button */}
         <button
           className="absolute top-2 right-2 text-red-600 font-bold text-lg"
           onClick={onClose}
@@ -67,8 +77,29 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
               onChange={(e) =>
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
+              placeholder="Dán link ảnh hoặc chọn file bên dưới"
+            />
+
+            {/* Nút chọn file ảnh */}
+            <input
+              type="file"
+              accept="image/png, image/jpeg, image/gif"
+              onChange={handleImageChange}
+              className="mt-2"
             />
           </div>
+
+          {/* Preview ảnh */}
+          {formData.imageUrl && (
+            <div>
+              <p className="text-sm text-black">Xem trước:</p>
+              <img
+                src={formData.imageUrl}
+                alt="preview"
+                className="w-40 h-auto rounded"
+              />
+            </div>
+          )}
 
           {/* Nội dung */}
           <div>
@@ -100,7 +131,6 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
             >
               <option value={0}>Update</option>
               <option value={1}>News</option>
-              <option value={2}>Hiển thị cả 2</option>
             </select>
           </div>
 

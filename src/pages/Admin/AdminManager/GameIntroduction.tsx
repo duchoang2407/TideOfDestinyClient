@@ -206,7 +206,6 @@ const GameIntroduction: React.FC = () => {
         onSubmit={handleUpdate}
       />
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}

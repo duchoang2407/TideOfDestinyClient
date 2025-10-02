@@ -89,7 +89,6 @@ const UpdateAddModal: React.FC<UpdateAddModalProps> = ({
             >
               <option value={0}>Update</option>
               <option value={1}>News</option>
-              <option value={2}>Hiển thị cả 2</option>
             </select>
           </div>
 
