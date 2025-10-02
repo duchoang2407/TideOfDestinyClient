@@ -72,27 +72,6 @@ const UpdateAddModal: React.FC<UpdateAddModalProps> = ({
             />
           </div>
 
-          {/* Loại hiển thị */}
-          <div>
-            <label className="block font-semibold text-black">
-              Loại hiển thị:
-            </label>
-            <select
-              className="w-full px-3 py-2 border rounded"
-              value={formData.newsCategory}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  newsCategory: Number(e.target.value),
-                })
-              }
-            >
-              <option value={0}>Update</option>
-              <option value={1}>News</option>
-              <option value={2}>Hiển thị cả 2</option>
-            </select>
-          </div>
-
           {/* Submit */}
           <button
             type="submit"

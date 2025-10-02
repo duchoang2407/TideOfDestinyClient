@@ -86,7 +86,6 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
           >
             <option value={0}>Update</option>
             <option value={1}>News</option>
-            <option value={2}>Cả 2</option>
           </select>
         </div>
 
