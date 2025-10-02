@@ -57,12 +57,23 @@ const NewsPage: React.FC = () => {
                 onClick={() => navigate(`/news/${item.id}`)}
                 className="relative flex items-stretch cursor-pointer"
               >
-                <div className="relative bg-[#3a4d28] text-yellow-300 font-bold text-lg flex items-center justify-center px-6 py-8 rounded-l-2xl shadow-md">
+                {/* Title */}
+                <div className="relative bg-[#3a4d28] text-yellow-300 font-bold text-lg flex items-center justify-center px-6 py-8 rounded-l-2xl shadow-md w-48">
                   {item.title}
                   <div className="absolute right-0 top-0 h-full w-6 bg-[#3a4d28] rounded-r-2xl"></div>
                 </div>
 
-                <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition">
+                {/* Content + Image */}
+                <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition flex gap-4">
+                  {/* Nếu có ảnh thì hiển thị */}
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="w-40 h-32 object-cover rounded-lg"
+                    />
+                  )}
+
                   <p className="text-gray-800">{item.content}</p>
                 </div>
               </div>

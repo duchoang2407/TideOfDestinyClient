@@ -123,8 +123,6 @@ const HomePage: React.FC = () => {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 };
