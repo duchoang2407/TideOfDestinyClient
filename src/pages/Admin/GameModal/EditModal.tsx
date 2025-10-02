@@ -14,7 +14,7 @@ interface EditModalProps {
     id: string;
     title: string;
     content: string;
-    imageUrl?: string | null;
+    imageUrl?: File | string | null;
     newsCategory: number;
   }) => void;
 }
@@ -25,7 +25,13 @@ const EditModal: React.FC<EditModalProps> = ({
   initialData,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    id: string;
+    title: string;
+    content: string;
+    imageUrl?: File | string | null;
+    newsCategory: number;
+  }>({
     id: "",
     title: "",
     content: "",
@@ -51,8 +57,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const localUrl = URL.createObjectURL(file);
-    setFormData({ ...formData, imageUrl: localUrl });
+    setFormData({ ...formData, imageUrl: file });
     console.log("Ảnh mới:", file);
   };
 
@@ -96,7 +101,9 @@ const EditModal: React.FC<EditModalProps> = ({
             <input
               type="text"
               className="w-full px-3 py-2 border rounded"
-              value={formData.imageUrl}
+              value={
+                typeof formData.imageUrl === "string" ? formData.imageUrl : ""
+              }
               onChange={(e) =>
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
@@ -114,7 +121,11 @@ const EditModal: React.FC<EditModalProps> = ({
               <div className="mt-2">
                 <p className="text-sm text-black">Xem trước:</p>
                 <img
-                  src={formData.imageUrl}
+                  src={
+                    formData.imageUrl instanceof File
+                      ? URL.createObjectURL(formData.imageUrl)
+                      : formData.imageUrl
+                  }
                   alt="preview"
                   className="w-40 h-auto rounded"
                 />
@@ -151,7 +162,7 @@ const EditModal: React.FC<EditModalProps> = ({
               }
             >
               <option value={0}>Update</option>
-              <option value={1}>News</option>\
+              <option value={1}>News</option>
             </select>
           </div>
 

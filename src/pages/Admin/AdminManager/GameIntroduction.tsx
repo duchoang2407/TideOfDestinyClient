@@ -5,7 +5,7 @@ import Pagination from "../../../component/Pagination";
 import ConfirmModal from "../GameModal/ConfirmModal";
 import axiosInstance from "../../../component/config/axiosConfig";
 import EditModal from "../GameModal/EditModal";
-import AddModal from "../GameModal/AddModal"; // ✅ thêm import
+import AddModal from "../GameModal/AddModal";
 
 interface Post {
   id: string;
@@ -66,9 +66,31 @@ const GameIntroduction: React.FC = () => {
     }
   };
 
-  const handleUpdate = async (data: Post) => {
+  const handleUpdate = async (data: {
+    id: string;
+    title: string;
+    content: string;
+    imageUrl?: File | null; // 👈 chỉ để File, không dùng string URL
+    newsCategory: number;
+  }) => {
     try {
-      await axiosInstance.put(`/News/${data.id}`, data);
+      const formData = new FormData();
+      formData.append("Title", data.title || "");
+      formData.append("Content", data.content || "");
+      formData.append("NewsCategory", data.newsCategory.toString());
+
+      if (data.imageUrl instanceof File) {
+        formData.append("ImageUrl", data.imageUrl);
+      } else {
+        // 👇 nếu không đổi ảnh, backend yêu cầu vẫn phải có field => gửi rỗng
+        formData.append("ImageUrl", "");
+      }
+
+      for (const [key, value] of formData.entries()) {
+        console.log("📦", key, value);
+      }
+
+      await axiosInstance.put(`/News/${data.id}`, formData);
       fetchPosts();
     } catch (err) {
       console.error("❌ Update error:", err);
@@ -88,15 +110,11 @@ const GameIntroduction: React.FC = () => {
   };
 
   // ✅ Thêm mới
-  const handleAdd = async (data: {
-    title: string;
-    content: string;
-    newsCategory: number;
-  }) => {
+  // ✅ Thêm mới
+  const handleAdd = async (formData: FormData) => {
     try {
-      await axiosInstance.post("/News", {
-        ...data,
-        imageUrl: null, // cái này modal add không có ảnh
+      await axiosInstance.post("/News", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       fetchPosts();
     } catch (err) {
