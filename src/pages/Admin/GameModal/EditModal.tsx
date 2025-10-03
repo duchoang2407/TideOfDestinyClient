@@ -35,7 +35,7 @@ const EditModal: React.FC<EditModalProps> = ({
     id: "",
     title: "",
     content: "",
-    imageUrl: "",
+    imageUrl: null,
     newsCategory: 0,
   });
 
@@ -45,7 +45,7 @@ const EditModal: React.FC<EditModalProps> = ({
         id: initialData.id,
         title: initialData.title,
         content: initialData.content,
-        imageUrl: initialData.imageUrl ?? "",
+        imageUrl: initialData.imageUrl ?? null,
         newsCategory: initialData.newsCategory ?? 0,
       });
     }
@@ -53,7 +53,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
-  // 👉 Hàm đổi ảnh từ file
+  // 👉 Đổi ảnh từ file
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -99,22 +99,10 @@ const EditModal: React.FC<EditModalProps> = ({
           <div>
             <label className="block font-semibold text-black">Ảnh:</label>
             <input
-              type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={
-                typeof formData.imageUrl === "string" ? formData.imageUrl : ""
-              }
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
-              }
-              placeholder="Nhập link ảnh hoặc chọn file bên dưới"
-            />
-
-            <input
               type="file"
               accept="image/png, image/jpeg, image/gif"
               onChange={handleImageChange}
-              className="mt-2"
+              className="mt-2 w-full"
             />
 
             {formData.imageUrl && (
@@ -124,7 +112,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   src={
                     formData.imageUrl instanceof File
                       ? URL.createObjectURL(formData.imageUrl)
-                      : formData.imageUrl
+                      : formData.imageUrl || ""
                   }
                   alt="preview"
                   className="w-40 h-auto rounded"
