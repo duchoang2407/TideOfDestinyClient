@@ -70,8 +70,9 @@ const GameIntroduction: React.FC = () => {
     id: string;
     title: string;
     content: string;
-    imageUrl?: File | null; // 👈 chỉ để File, không dùng string URL
+    imageUrl?: File | null;
     newsCategory: number;
+    removeCurrentImage?: boolean;
   }) => {
     try {
       const formData = new FormData();
@@ -80,17 +81,25 @@ const GameIntroduction: React.FC = () => {
       formData.append("NewsCategory", data.newsCategory.toString());
 
       if (data.imageUrl instanceof File) {
+        // Nếu có file mới thì gửi file
         formData.append("ImageUrl", data.imageUrl);
+        formData.append("RemoveCurrentImage", "false");
       } else {
-        // 👇 nếu không đổi ảnh, backend yêu cầu vẫn phải có field => gửi rỗng
-        formData.append("ImageUrl", "");
+        // Không đổi ảnh thì backend yêu cầu vẫn có field RemoveCurrentImage
+        formData.append(
+          "RemoveCurrentImage",
+          data.removeCurrentImage ? "true" : "false"
+        );
       }
 
       for (const [key, value] of formData.entries()) {
         console.log("📦", key, value);
       }
 
-      await axiosInstance.put(`/News/${data.id}`, formData);
+      await axiosInstance.put(`/News/${data.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       fetchPosts();
     } catch (err) {
       console.error("❌ Update error:", err);

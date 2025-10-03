@@ -69,9 +69,22 @@ const UpdateInformation: React.FC = () => {
     title: string;
     content: string;
     newsCategory: number;
+    imageUrl?: File | null;
   }) => {
     try {
-      await axiosInstance.post("/News", data);
+      const formData = new FormData();
+      formData.append("Title", data.title || "");
+      formData.append("Content", data.content || "");
+      formData.append("NewsCategory", data.newsCategory.toString());
+
+      if (data.imageUrl instanceof File) {
+        formData.append("ImageUrl", data.imageUrl);
+      }
+
+      await axiosInstance.post("/News", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       fetchPosts();
       setIsAddOpen(false);
     } catch (err) {
@@ -80,9 +93,34 @@ const UpdateInformation: React.FC = () => {
   };
 
   // ✅ Edit
-  const handleEdit = async (data: Post) => {
+  const handleEdit = async (data: {
+    id: string;
+    title: string;
+    content: string;
+    imageUrl?: File | null;
+    newsCategory: number;
+    removeCurrentImage?: boolean;
+  }) => {
     try {
-      await axiosInstance.put(`/News/${data.id}`, data);
+      const formData = new FormData();
+      formData.append("Title", data.title || "");
+      formData.append("Content", data.content || "");
+      formData.append("NewsCategory", data.newsCategory.toString());
+
+      if (data.imageUrl instanceof File) {
+        formData.append("ImageUrl", data.imageUrl);
+        formData.append("RemoveCurrentImage", "false");
+      } else {
+        formData.append(
+          "RemoveCurrentImage",
+          data.removeCurrentImage ? "true" : "false"
+        );
+      }
+
+      await axiosInstance.put(`/News/${data.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       fetchPosts();
       setIsEditOpen(false);
       setEditingPost(null);
