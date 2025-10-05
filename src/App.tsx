@@ -24,6 +24,7 @@ import UpdateInformation from "./pages/Admin/AdminManager/UpdateInformation.tsx"
 import LoginModal from "./pages/Login/LoginModal.tsx";
 import RegisterModal from "./pages/RegisterPage/RegisterModal.tsx";
 import ForgotPasswordModal from "./pages/ForgotPasswordPage/ForgotPasswordModal.tsx";
+import GameIntroductionDetailPage from "./pages/GameIntroduction/GameIntroductionDetailPage.tsx";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -45,7 +46,10 @@ const App: React.FC = () => {
             <Route path="newspage" element={<NewsPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="news/:version" element={<NewsDetailPage />} />
-
+            <Route
+              path="game-introduction/:id"
+              element={<GameIntroductionDetailPage />}
+            />
             <Route
               path="player/home"
               element={

@@ -1,92 +1,67 @@
+// src/pages/News/NewsDetailPage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import axiosInstance from "../../component/config/axiosConfig";
 
-interface NewsItem {
+interface NewsDetail {
   id: number;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  publishedAt?: string;
+  title: string; // ví dụ: "v0.2.8"
+  content: string; // danh sách update
+  createdAt: string; // ngày đăng
 }
 
 const NewsDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // lấy id từ URL
+  const { version } = useParams(); // lấy version từ url
   const navigate = useNavigate();
-  const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
+  const [news, setNews] = useState<NewsDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        if (!id) return;
-        const res = await axiosInstance.get(`/News/${id}`);
-        setNewsItem(res.data);
-      } catch (err) {
-        console.error("❌ Fetch detail error:", err);
+        const response = await axiosInstance.get(`/News/${version}`);
+        setNews(response.data);
+      } catch (error: any) {
+        console.error("Error fetching news detail:", error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchDetail();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#c4a875]">
-        <p className="text-xl">Đang tải dữ liệu...</p>
-      </div>
-    );
-  }
-
-  if (!newsItem) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#c4a875]">
-        <p className="text-xl">Không tìm thấy thông tin</p>
-      </div>
-    );
-  }
+    if (version) fetchDetail();
+  }, [version]);
 
   return (
     <div className="bg-[#c4a875] min-h-screen flex flex-col">
-      <main className="max-w-3xl mx-auto py-10 px-4 flex-grow">
-        {/* Back button */}
+      {/* Header + Nội dung chính */}
+      <main className="max-w-3xl h-full mx-auto py-12 px-4 flex-grow">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-800 mb-4 hover:text-black"
+          className="text-[#5a3700] hover:underline mb-6 flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" /> Quay lại
+          ← Quay lại
         </button>
 
-        {/* Title */}
-        <h1 className="text-center text-3xl font-bold mb-8">
-          {newsItem.title}
+        <h1 className="text-center text-3xl md:text-4xl font-bold text-[#7d4b00] mb-10">
+          THÔNG TIN CẬP NHẬT
         </h1>
 
-        {/* Card */}
-        <div className="bg-[#2f3315] p-6 rounded-2xl shadow-lg">
-          {/* Content */}
-          <div className="bg-white p-6 rounded-xl">
-            {newsItem.publishedAt && (
-              <p className="text-right text-sm text-gray-600 mb-4">
-                {new Date(newsItem.publishedAt).toLocaleDateString("vi-VN")}
-              </p>
-            )}
+        {loading ? (
+          <p className="text-center">Đang tải dữ liệu...</p>
+        ) : !news ? (
+          <p className="text-center">Không tìm thấy dữ liệu.</p>
+        ) : (
+          <div className="bg-[#353515] text-[#f2c94c] rounded-2xl  shadow-lg p-6">
+            {/* Version */}
+            <div className="bg-[#2b2b0f] rounded-lg text-center py-3 mb-6">
+              <span className="font-bold text-lg">{news.title}</span>
+            </div>
 
-            {newsItem.imageUrl && (
-              <img
-                src={newsItem.imageUrl}
-                alt={newsItem.title}
-                className="w-full h-64 object-cover rounded-lg mb-4"
-              />
-            )}
-
-            <p className="text-gray-800 whitespace-pre-line">
-              {newsItem.content}
-            </p>
+            {/* Nội dung chi tiết */}
+            <div className="bg-[#f5e9d7] text-[#5a3700] rounded-lg p-6 leading-relaxed whitespace-pre-line min-h-[300px]">
+              {news.content}
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );

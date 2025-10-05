@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Pagination from "../../component/Pagination";
 import axiosInstance from "../../component/config/axiosConfig";
 
 interface NewsItem {
@@ -11,6 +13,9 @@ interface NewsItem {
 const GameIntroductionPage: React.FC = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const itemsPerPage = 3;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchIntro = async () => {
@@ -28,46 +33,70 @@ const GameIntroductionPage: React.FC = () => {
     fetchIntro();
   }, []);
 
+  // ✅ Tính toán phân trang
+  const totalPages = Math.ceil(news.length / itemsPerPage);
+  const startIndex = page * itemsPerPage;
+  const currentData = news.slice(startIndex, startIndex + itemsPerPage);
+
   return (
-    <div className="bg-[#f5e9d7] min-h-screen flex flex-col">
-      <main className="max-w-5xl mx-auto py-12 px-4 flex-grow">
+    <div className="bg-[#c4a875] min-h-screen flex flex-col">
+      <main className="max-w-6xl mx-auto py-12 px-6 flex-grow">
         <h1 className="text-center text-4xl font-bold mb-14 text-[#7d4b00] underline decoration-2">
           GIỚI THIỆU
         </h1>
 
         {loading ? (
           <p className="text-center text-lg">Đang tải dữ liệu...</p>
-        ) : news.length === 0 ? (
+        ) : currentData.length === 0 ? (
           <p className="text-center text-lg">Không có dữ liệu nào.</p>
         ) : (
-          news.map((item, index) => (
-            <section
-              key={item.id}
-              className="grid md:grid-cols-2 gap-10 mb-16 items-center"
-            >
-              {item.imageUrl && (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className={`rounded-2xl shadow-lg w-full h-72 object-cover ${
-                    index % 2 === 1 ? "order-2 md:order-1" : ""
-                  }`}
-                />
-              )}
+          <div className="flex flex-col gap-12">
+            {currentData.map((item, index) => (
               <div
-                className={`bg-[#d8c4a6] p-8 rounded-2xl shadow-lg ${
-                  index % 2 === 1 ? "order-1 md:order-2" : ""
-                }`}
+                key={item.id}
+                onClick={() => navigate(`/game-introduction/${item.id}`)}
+                className="border-4 border-[#7d4b00] rounded-3xl p-6 shadow-xl cursor-pointer hover:scale-[1.01] hover:shadow-2xl transition"
               >
-                <h2 className="font-bold text-2xl mb-4 text-[#5a3700]">
-                  {item.title.toUpperCase()}
-                </h2>
-                <p className="leading-relaxed text-lg text-gray-800 whitespace-pre-line">
-                  {item.content}
-                </p>
+                <section className="grid md:grid-cols-2 gap-10 items-center">
+                  {/* Ảnh */}
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className={`rounded-2xl shadow-lg w-full h-80 object-cover ${
+                        index % 2 === 1 ? "md:order-2" : ""
+                      }`}
+                    />
+                  )}
+                  {/* Nội dung */}
+                  <div
+                    className={`bg-[#d8c4a6] p-6 rounded-2xl shadow-lg min-w-[500px] min-h-[250px] flex flex-col justify-between ${
+                      index % 2 === 1 ? "md:order-1" : ""
+                    }`}
+                  >
+                    <h2 className="font-bold text-2xl mb-4 text-[#5a3700]">
+                      {item.title.toUpperCase()}
+                    </h2>
+                    <p className="leading-relaxed text-lg text-gray-800 line-clamp-3">
+                      {item.content}
+                    </p>
+                    <p className="mt-4 text-right text-[#7d4b00] font-semibold underline">
+                      Xem chi tiết →
+                    </p>
+                  </div>
+                </section>
               </div>
-            </section>
-          ))
+            ))}
+
+            {/* ✅ Pagination giống trang News */}
+            <div className="flex justify-center">
+              <Pagination
+                total={totalPages}
+                current={page}
+                onChange={setPage}
+              />
+            </div>
+          </div>
         )}
       </main>
     </div>
