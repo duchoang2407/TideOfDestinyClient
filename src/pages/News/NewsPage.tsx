@@ -1,3 +1,4 @@
+// src/pages/NewsPage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../component/Pagination";
@@ -5,9 +6,8 @@ import axiosInstance from "../../component/config/axiosConfig";
 
 interface NewsItem {
   id: number;
-  title: string;
-  content: string;
-  imageUrl?: string;
+  title: string; // ví dụ: v0.2.8
+  content: string; // nội dung update
 }
 
 const NewsPage: React.FC = () => {
@@ -21,9 +21,8 @@ const NewsPage: React.FC = () => {
     const fetchNews = async () => {
       try {
         const response = await axiosInstance.get("/News", {
-          params: { category: 0 },
+          params: { category: 0 }, // ✅ lấy danh sách cập nhật
         });
-        console.log("API data:", response.data);
         setNews(response.data);
       } catch (error: any) {
         console.error("Error fetching news:", error.message);
@@ -39,9 +38,9 @@ const NewsPage: React.FC = () => {
   const currentData = news.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="w-full min-h-screen bg-[#c4a875] flex flex-col">
+    <div className="w-full min-h-screen bg-[#c4a875] flex flex-col relative">
       <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-center mb-8">
+        <h1 className="text-2xl font-bold text-center mb-8 text-[#3a2a00]">
           THÔNG TIN CẬP NHẬT
         </h1>
 
@@ -57,38 +56,28 @@ const NewsPage: React.FC = () => {
                 onClick={() => navigate(`/news/${item.id}`)}
                 className="relative flex items-stretch cursor-pointer"
               >
-                {/* Title */}
+                {/* Khối tiêu đề version */}
                 <div className="relative bg-[#3a4d28] text-yellow-300 font-bold text-lg flex items-center justify-center px-6 py-8 rounded-l-2xl shadow-md w-48">
                   {item.title}
                   <div className="absolute right-0 top-0 h-full w-6 bg-[#3a4d28] rounded-r-2xl"></div>
                 </div>
 
-                {/* Content + Image */}
-                <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition flex gap-4">
-                  {/* Nếu có ảnh thì hiển thị */}
-                  {item.imageUrl && (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-40 h-32 object-cover rounded-lg"
-                    />
-                  )}
-
-                  <p className="text-gray-800">{item.content}</p>
+                {/* Khối nội dung */}
+                <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition">
+                  <p className="text-gray-800 line-clamp-3">{item.content}</p>
                 </div>
               </div>
             ))}
-
-            <div className="flex justify-center">
-              <Pagination
-                total={totalPages}
-                current={page}
-                onChange={setPage}
-              />
-            </div>
           </div>
         )}
       </main>
+
+      {/* ✅ Pagination luôn cố định ở giữa, dưới cùng trang */}
+      {totalPages > 1 && (
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
+          <Pagination total={totalPages} current={page} onChange={setPage} />
+        </div>
+      )}
     </div>
   );
 };
