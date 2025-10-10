@@ -1,5 +1,6 @@
 // pages/ForgotPasswordPage/ForgotPasswordModal.tsx
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -20,53 +21,69 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
     alert("Nếu email tồn tại, bạn sẽ nhận được link đặt lại mật khẩu!");
   };
 
-  if (!isOpen) return null; // không render khi modal đóng
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-[#2f3315] text-white p-8 rounded-lg shadow-lg w-[400px] relative">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-2 right-2 bg-red-600 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
-          ✕
-        </button>
-
-        <h2 className="text-center text-xl font-bold mb-6">Quên mật khẩu</h2>
-
-        <form onSubmit={handleForgotPassword}>
-          <div className="mb-4">
-            <label className="block text-sm mb-2">Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 rounded bg-[#1f2010] text-white border border-gray-600 focus:outline-none"
-              placeholder="Nhập email đã đăng kí"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-red-600 py-2 rounded font-bold hover:bg-red-700 transition"
+          <motion.div
+            className="bg-[#2f3315] text-white rounded-lg shadow-lg w-[550px] max-h-[90vh] overflow-y-auto p-10 relative"
+            initial={{ opacity: 0, scale: 0.8, y: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -50 }}
+            transition={{ type: "spring", stiffness: 260, damping: 25 }}
           >
-            Gửi yêu cầu đặt lại mật khẩu
-          </button>
-        </form>
+            {/* nút đóng */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute top-3 right-3 bg-red-600 text-white w-8 h-8 rounded-full text-sm flex items-center justify-center hover:bg-red-700 transition"
+            >
+              ✕
+            </button>
 
-        <div className="flex justify-between text-sm mt-4">
-          <button
-            type="button"
-            onClick={onOpenLogin}
-            className="hover:underline hover:text-blue-300"
-          >
-            Quay lại đăng nhập
-          </button>
-        </div>
-      </div>
-    </div>
+            <h2 className="text-center text-2xl font-bold mb-8">
+              Quên mật khẩu
+            </h2>
+
+            <form onSubmit={handleForgotPassword}>
+              <div className="mb-6">
+                <label className="block text-sm mb-2">Email:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 rounded bg-[#1f2010] text-white border border-gray-600 focus:outline-none"
+                  placeholder="Nhập email đã đăng kí"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-red-600 py-3 rounded font-bold hover:bg-red-700 transition mb-4"
+              >
+                Gửi yêu cầu đặt lại mật khẩu
+              </button>
+            </form>
+
+            <div className="flex justify-end text-sm mt-4">
+              <button
+                type="button"
+                onClick={onOpenLogin}
+                className="hover:underline hover:text-blue-300"
+              >
+                Quay lại đăng nhập
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

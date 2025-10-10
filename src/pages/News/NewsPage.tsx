@@ -1,19 +1,20 @@
-// src/pages/NewsPage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../../component/Pagination";
 import axiosInstance from "../../component/config/axiosConfig";
+import { motion, AnimatePresence } from "framer-motion";
+import PagePagination from "../../component/PagePagination";
 
 interface NewsItem {
   id: number;
-  title: string; // ví dụ: v0.2.8
-  content: string; // nội dung update
+  title: string;
+  content: string;
 }
 
 const NewsPage: React.FC = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = next, -1 = prev
   const itemsPerPage = 3;
   const navigate = useNavigate();
 
@@ -21,7 +22,7 @@ const NewsPage: React.FC = () => {
     const fetchNews = async () => {
       try {
         const response = await axiosInstance.get("/News", {
-          params: { category: 0 }, // ✅ lấy danh sách cập nhật
+          params: { category: 0 },
         });
         setNews(response.data);
       } catch (error: any) {
@@ -37,46 +38,115 @@ const NewsPage: React.FC = () => {
   const startIndex = page * itemsPerPage;
   const currentData = news.slice(startIndex, startIndex + itemsPerPage);
 
+  // Animation for the whole page of cards
+  const pageVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 300 : -300,
+      opacity: 0,
+    }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -300 : 300,
+      opacity: 0,
+    }),
+  };
+
+  const pageTransition = { type: "spring", stiffness: 200, damping: 30 };
+
+  const handlePageChange = (newPage: number) => {
+    setDirection(newPage > page ? 1 : -1);
+    setPage(newPage);
+  };
+
   return (
-    <div className="w-full min-h-screen bg-[#c4a875] flex flex-col relative">
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-center mb-8 text-[#3a2a00]">
+    <div className="relative min-h-screen bg-[#2E4B2B] text-[#E0F0C0] flex flex-col overflow-hidden">
+      {/* Background subtle */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute w-[150%] h-[150%] bg-[radial-gradient(circle_at_50%_50%,rgba(144,189,144,0.15),transparent_70%)] blur-3xl"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute w-full h-full bg-[url('/images/smoke.png')] bg-cover opacity-10"
+          animate={{ backgroundPositionX: ["0%", "100%"] }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+      <main className="flex-1 p-6 relative z-10">
+        <motion.h1
+          className="text-4xl font-extrabold text-center mb-12"
+          initial={{ opacity: 0, y: -25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           THÔNG TIN CẬP NHẬT
-        </h1>
+        </motion.h1>
 
         {loading ? (
-          <p className="text-center text-lg">Đang tải dữ liệu...</p>
+          <p className="text-center text-lg text-gray-300">
+            Đang tải dữ liệu...
+          </p>
         ) : currentData.length === 0 ? (
-          <p className="text-center text-lg">Không có dữ liệu nào.</p>
+          <p className="text-center text-lg text-gray-300">
+            Không có dữ liệu nào.
+          </p>
         ) : (
-          <div className="flex flex-col gap-8 max-w-4xl mx-auto">
-            {currentData.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => navigate(`/news/${item.id}`)}
-                className="relative flex items-stretch cursor-pointer"
+          <div className="overflow-hidden">
+            <AnimatePresence custom={direction} mode="wait">
+              <motion.div
+                key={page} // key thay đổi => trigger AnimatePresence
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={pageTransition}
+                className="flex flex-col gap-10 max-w-5xl mx-auto"
               >
-                {/* Khối tiêu đề version */}
-                <div className="relative bg-[#3a4d28] text-yellow-300 font-bold text-lg flex items-center justify-center px-6 py-8 rounded-l-2xl shadow-md w-48">
-                  {item.title}
-                  <div className="absolute right-0 top-0 h-full w-6 bg-[#3a4d28] rounded-r-2xl"></div>
-                </div>
+                {currentData.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 0 40px rgba(230, 255, 180, 0.6)",
+                    }}
+                    transition={{ type: "spring", stiffness: 180, damping: 15 }}
+                    className="flex flex-col md:flex-row cursor-pointer rounded-3xl shadow-xl overflow-hidden transition-all duration-300 bg-[#375231] p-8"
+                    onClick={() => navigate(`/news/${item.id}`)}
+                  >
+                    <div className="flex-shrink-0 w-full md:w-64 mb-4 md:mb-0 md:mr-6 bg-[#4E653A] text-[#C9D7A0] font-bold text-xl flex items-center justify-center rounded-2xl shadow-md p-6">
+                      {item.title}
+                    </div>
 
-                {/* Khối nội dung */}
-                <div className="flex-1 bg-white p-6 rounded-r-2xl shadow-lg hover:shadow-2xl transition">
-                  <p className="text-gray-800 line-clamp-3">{item.content}</p>
-                </div>
-              </div>
-            ))}
+                    <div className="flex-1 bg-[#2E4B2B]/90 p-6 rounded-2xl shadow-inner">
+                      <p className="text-[#E0F0C0] text-lg leading-relaxed">
+                        {item.content}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
         )}
       </main>
 
-      {/* ✅ Pagination luôn cố định ở giữa, dưới cùng trang */}
+      {/* PagePagination */}
       {totalPages > 1 && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-          <Pagination total={totalPages} current={page} onChange={setPage} />
-        </div>
+        <motion.div
+          className="flex justify-center mt-12 mb-16 relative z-10"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <PagePagination
+            total={totalPages}
+            current={page}
+            onChange={handlePageChange}
+          />
+        </motion.div>
       )}
     </div>
   );
