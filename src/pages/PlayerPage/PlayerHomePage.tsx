@@ -123,8 +123,6 @@ const PlayerHomePage: React.FC = () => {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 };

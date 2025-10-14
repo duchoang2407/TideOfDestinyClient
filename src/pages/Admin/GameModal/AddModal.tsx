@@ -3,113 +3,88 @@ import React, { useState } from "react";
 interface AddModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    title: string;
-    content: string;
-    imageUrl?: string;
-    newsCategory: number;
-  }) => void;
+  onSubmit: (data: FormData) => void;
 }
 
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    imageUrl: "",
-    newsCategory: 1, // mặc định là News
-  });
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("Title", title);
+    formData.append("Content", content);
+    formData.append("NewsCategory", "1");
+    if (imageFile) formData.append("ImageUrl", imageFile);
     onSubmit(formData);
     onClose();
-    // reset lại form
-    setFormData({ title: "", content: "", imageUrl: "", newsCategory: 1 });
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-[#e8c07a] rounded-xl p-6 w-[400px] shadow-lg relative">
-        {/* Close button */}
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+      <div className="bg-gradient-to-br from-[#fff4e6] to-[#ffe4c4] border border-[#d9b778]/30 rounded-2xl p-6 w-[480px] shadow-xl shadow-black/10 relative animate-scaleUp">
         <button
-          className="absolute top-2 right-2 text-red-600 font-bold text-lg"
+          className="absolute top-3 right-4 text-red-600 text-xl font-bold hover:scale-110 transition"
           onClick={onClose}
         >
           ✕
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-black">Thêm Bài Viết Mới</h2>
+        <h2 className="text-2xl font-bold mb-5 text-center text-[#1a2a3d]">
+          📝 Add New Article
+        </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          {/* Tiêu đề */}
-          <div>
-            <label className="block font-semibold text-black">Tiêu Đề:</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              required
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <label className="font-semibold text-[#1a2a3d]">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full px-3 py-2 border border-[#d9b778]/40 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[#d9b778]"
+            required
+          />
+
+          <label className="font-semibold text-[#1a2a3d]">Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="block text-sm"
+          />
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="preview"
+              className="w-40 h-auto rounded-lg mt-2 shadow-md"
             />
-          </div>
+          )}
 
-          {/* Link ảnh */}
-          <div>
-            <label className="block font-semibold text-black">Link Ảnh:</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
-              }
-            />
-          </div>
+          <label className="font-semibold text-[#1a2a3d]">Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full px-3 py-2 border border-[#d9b778]/40 rounded-lg shadow-inner h-28 focus:outline-none focus:ring-2 focus:ring-[#d9b778]"
+            required
+          />
 
-          {/* Nội dung */}
-          <div>
-            <label className="block font-semibold text-black">Nội Dung:</label>
-            <textarea
-              className="w-full px-3 py-2 border rounded h-28"
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
-              required
-            />
-          </div>
-
-          {/* Loại hiển thị */}
-          <div>
-            <label className="block font-semibold text-black">
-              Loại hiển thị:
-            </label>
-            <select
-              className="w-full px-3 py-2 border rounded"
-              value={formData.newsCategory}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  newsCategory: Number(e.target.value),
-                })
-              }
-            >
-              <option value={0}>Update</option>
-              <option value={1}>News</option>
-              <option value={2}>Hiển thị cả 2</option>
-            </select>
-          </div>
-
-          {/* Submit */}
           <button
             type="submit"
-            className="self-end px-4 py-2 bg-[#1a2a3d] text-white rounded hover:bg-[#243b55]"
+            className="mt-3 bg-[#1a2a3d] text-white font-semibold py-2 rounded-lg hover:bg-[#243b55] transition shadow-md"
           >
-            Thêm
+            Add Article
           </button>
         </form>
       </div>
