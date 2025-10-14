@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface EditModalProps {
   isOpen: boolean;
@@ -14,8 +14,9 @@ interface EditModalProps {
     id: string;
     title: string;
     content: string;
-    imageUrl?: File | string | null;
+    imageUrl?: File | null;
     newsCategory: number;
+    removeCurrentImage?: boolean;
   }) => void;
 }
 
@@ -25,140 +26,137 @@ const EditModal: React.FC<EditModalProps> = ({
   initialData,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState<{
-    id: string;
-    title: string;
-    content: string;
-    imageUrl?: File | string | null;
-    newsCategory: number;
-  }>({
+  const [form, setForm] = useState({
     id: "",
     title: "",
     content: "",
-    imageUrl: null,
-    newsCategory: 0,
+    imageUrl: null as File | null,
+    newsCategory: 1,
+    removeCurrentImage: false,
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
+      setForm({
         id: initialData.id,
         title: initialData.title,
         content: initialData.content,
-        imageUrl: initialData.imageUrl ?? null,
-        newsCategory: initialData.newsCategory ?? 0,
+        imageUrl: null,
+        newsCategory: initialData.newsCategory ?? 1,
+        removeCurrentImage: false,
       });
     }
   }, [initialData]);
 
   if (!isOpen) return null;
 
-  // 👉 Đổi ảnh từ file
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setFormData({ ...formData, imageUrl: file });
-    console.log("Ảnh mới:", file);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(form);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-[#e8c07a] rounded-xl p-6 w-[400px] shadow-lg relative">
-        {/* Close button */}
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 animate-fadeIn">
+      <div className="bg-gradient-to-br from-[#fff4e6] to-[#ffe4c4] border border-[#d9b778]/30 rounded-2xl p-6 w-[480px] shadow-xl shadow-black/10 animate-scaleUp relative">
         <button
-          className="absolute top-2 right-2 text-red-600 font-bold text-lg"
+          className="absolute top-3 right-4 text-red-600 text-xl font-bold hover:scale-110 transition"
           onClick={onClose}
         >
           ✕
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-black">Edit Information</h2>
+        <h2 className="text-2xl font-bold mb-5 text-center text-[#1a2a3d]">
+          ✏️ Edit Article
+        </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          {/* Tiêu đề */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Title */}
           <div>
-            <label className="block font-semibold text-black">Tiêu Đề:</label>
+            <label className="font-semibold text-[#1a2a3d]">Title</label>
             <input
               type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              className="w-full px-3 py-2 border border-[#d9b778]/40 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[#d9b778]"
               required
             />
           </div>
 
-          {/* Ảnh */}
+          {/* Image */}
           <div>
-            <label className="block font-semibold text-black">Ảnh:</label>
+            <label className="font-semibold text-[#1a2a3d]">Image</label>
             <input
               type="file"
-              accept="image/png, image/jpeg, image/gif"
-              onChange={handleImageChange}
-              className="mt-2 w-full"
+              accept="image/*"
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  imageUrl: e.target.files?.[0] || null,
+                  removeCurrentImage: false,
+                })
+              }
+              className="block text-sm mt-1"
             />
-
-            {formData.imageUrl && (
-              <div className="mt-2">
-                <p className="text-sm text-black">Xem trước:</p>
+            {initialData?.imageUrl && (
+              <div className="mt-2 flex items-center gap-3">
                 <img
-                  src={
-                    formData.imageUrl instanceof File
-                      ? URL.createObjectURL(formData.imageUrl)
-                      : formData.imageUrl || ""
-                  }
-                  alt="preview"
-                  className="w-40 h-auto rounded"
+                  src={initialData.imageUrl}
+                  alt="current"
+                  className="w-40 h-28  object-cover rounded-lg shadow-md border border-[#d9b778]/30"
                 />
+                <label className="flex items-center gap-1 text-sm text-red-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.removeCurrentImage}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        removeCurrentImage: e.target.checked,
+                      })
+                    }
+                  />
+                  Remove current
+                </label>
               </div>
             )}
           </div>
 
-          {/* Nội dung */}
+          {/* Content */}
           <div>
-            <label className="block font-semibold text-black">Nội Dung:</label>
+            <label className="font-semibold text-[#1a2a3d]">Content</label>
             <textarea
-              className="w-full px-3 py-2 border rounded h-28"
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
+              value={form.content}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              className="w-full px-3 py-2 border border-[#d9b778]/40 rounded-lg shadow-inner h-28 focus:outline-none focus:ring-2 focus:ring-[#d9b778]"
               required
             />
           </div>
 
-          {/* Loại hiển thị */}
+          {/* Category */}
           <div>
-            <label className="block font-semibold text-black">
-              Loại hiển thị:
-            </label>
+            <label className="font-semibold text-[#1a2a3d]">Category</label>
             <select
-              className="w-full px-3 py-2 border rounded"
-              value={formData.newsCategory}
+              value={form.newsCategory}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  newsCategory: Number(e.target.value),
+                setForm({
+                  ...form,
+                  newsCategory: parseInt(e.target.value),
                 })
               }
+              className="w-full px-3 py-2 border border-[#d9b778]/40 rounded-lg shadow-inner focus:ring-2 focus:ring-[#d9b778]"
             >
               <option value={0}>Update</option>
               <option value={1}>News</option>
             </select>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className="self-end px-4 py-2 bg-[#1a2a3d] text-white rounded hover:bg-[#243b55]"
+            className="mt-3 bg-[#1a2a3d] text-white font-semibold py-2 rounded-lg hover:bg-[#243b55] transition shadow-md"
           >
-            Submit
+            Save Changes
           </button>
         </form>
       </div>

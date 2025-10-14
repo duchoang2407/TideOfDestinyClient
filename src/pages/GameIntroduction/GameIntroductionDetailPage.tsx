@@ -1,6 +1,6 @@
-// src/pages/GameIntroductionDetailPage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import axiosInstance from "../../component/config/axiosConfig";
 
 interface NewsItem {
@@ -9,6 +9,27 @@ interface NewsItem {
   content: string;
   imageUrl?: string;
 }
+
+// Helper để render từng ký tự với animation
+const AnimatedText: React.FC<{ text: string; delay?: number }> = ({
+  text,
+  delay = 0,
+}) => {
+  return (
+    <p className="leading-relaxed mb-4 text-[#E0F0C0]">
+      {text.split("").map((char, idx) => (
+        <motion.span
+          key={idx}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: delay + idx * 0.02, duration: 0.03 }}
+        >
+          {char}
+        </motion.span>
+      ))}
+    </p>
+  );
+};
 
 const GameIntroductionDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -31,43 +52,79 @@ const GameIntroductionDetailPage: React.FC = () => {
   }, [id]);
 
   return (
-    <div className="bg-[#c4a875] min-h-screen flex flex-col">
-      <main className="max-w-5xl mx-auto py-12 px-4 flex-grow">
-        <button
+    <div className="relative min-h-screen flex flex-col overflow-hidden bg-[#2E4B2B] text-[#E0F0C0]">
+      {/* Background động */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute w-[150%] h-[150%] bg-[radial-gradient(circle_at_50%_50%,rgba(144,189,144,0.1),transparent_70%)] blur-3xl"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute w-full h-full bg-[url('/images/smoke.png')] bg-cover opacity-15"
+          animate={{ backgroundPositionX: ["0%", "100%"] }}
+          transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+      <main className="max-w-6xl mx-auto py-16 px-6 flex-grow relative">
+        {/* Button quay lại */}
+        <motion.button
           onClick={() => navigate(-1)}
-          className="text-[#5a3700] hover:underline mb-6 flex items-center gap-2"
+          className="text-[#C9D7A0] hover:text-[#E0F0C0] hover:underline mb-8 flex items-center gap-2 font-semibold transition-colors"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
           ← Quay lại
-        </button>
+        </motion.button>
 
         {loading ? (
-          <p className="text-center">Đang tải dữ liệu...</p>
+          <p className="text-center text-lg text-gray-300">
+            Đang tải dữ liệu...
+          </p>
         ) : !news ? (
-          <p className="text-center">Không tìm thấy dữ liệu.</p>
+          <p className="text-center text-lg text-gray-300">
+            Không tìm thấy dữ liệu.
+          </p>
         ) : (
-          <div className="bg-[#d8c4a6] p-10 rounded-2xl shadow-lg border-2 border-[#7d4b00]">
-            <h1 className="text-3xl font-bold text-[#5a3700] mb-10 text-center">
-              {news.title}
-            </h1>
+          <motion.div
+            className="bg-[#375231]/90 backdrop-blur-md rounded-3xl shadow-[0_0_30px_rgba(160,200,128,0.3)] border border-[#C9D7A0] p-10 flex flex-col md:flex-row gap-10 items-start
+                       hover:shadow-[0_0_50px_rgba(200,230,160,0.5)] transition-shadow duration-300"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            {/* Ảnh */}
+            {news.imageUrl && (
+              <motion.img
+                src={news.imageUrl}
+                alt={news.title}
+                className="rounded-2xl shadow-lg w-full md:w-[50%] object-cover hover:scale-105 transition-transform duration-300"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+              />
+            )}
 
-            <div className="flex flex-col md:flex-row gap-10 items-start">
-              {/* Ảnh giữ nguyên độ to */}
-              {news.imageUrl && (
-                <img
-                  src={news.imageUrl}
-                  alt={news.title}
-                  className="rounded-xl shadow-md w-full md:w-[55%] max-h-[500px] object-cover"
-                />
-              )}
+            {/* Text content */}
+            <div className="w-full md:w-[50%] flex flex-col">
+              {/* Tiêu đề gradient + glow */}
+              <motion.h1
+                className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-[#C9D7A0] via-[#E0F0C0] to-[#C9D7A0] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(200,230,160,0.6)]"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                {news.title.toUpperCase()}
+              </motion.h1>
 
-              {/* Nội dung sang phải, vẫn full size */}
-              <div className="w-full max-h-[250px]  md:w-[45%]">
-                <p className="text-lg text-gray-800 whitespace-pre-line min-w-[500px] leading-relaxed">
-                  {news.content}
-                </p>
-              </div>
+              {/* Nội dung fade-in từng ký tự */}
+              {news.content.split("\n").map((line, idx) => (
+                <AnimatedText key={idx} text={line} delay={0.2 + idx * 0.1} />
+              ))}
             </div>
-          </div>
+          </motion.div>
         )}
       </main>
     </div>
