@@ -38,7 +38,7 @@ const NewsPage: React.FC = () => {
   const startIndex = page * itemsPerPage;
   const currentData = news.slice(startIndex, startIndex + itemsPerPage);
 
-  // Animation for the whole page of cards
+  // Animation for page transitions
   const pageVariants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 300 : -300,
@@ -59,7 +59,7 @@ const NewsPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#2E4B2B] text-[#E0F0C0] flex flex-col overflow-hidden">
+    <div className="relative min-h-screen mb-1 bg-[#2E4B2B] text-[#E0F0C0] flex flex-col overflow-hidden">
       {/* Background subtle */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -76,7 +76,7 @@ const NewsPage: React.FC = () => {
 
       <main className="flex-1 p-6 relative z-10">
         <motion.h1
-          className="text-4xl font-extrabold text-center mb-12"
+          className="text-4xl font-extrabold text-center mb-5"
           initial={{ opacity: 0, y: -25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -96,32 +96,39 @@ const NewsPage: React.FC = () => {
           <div className="overflow-hidden">
             <AnimatePresence custom={direction} mode="wait">
               <motion.div
-                key={page} // key thay đổi => trigger AnimatePresence
+                key={page}
                 custom={direction}
                 variants={pageVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
                 transition={pageTransition}
-                className="flex flex-col gap-10 max-w-5xl mx-auto"
+                className="flex flex-col gap-12 max-w-5xl mx-auto"
               >
                 {currentData.map((item) => (
                   <motion.div
                     key={item.id}
                     whileHover={{
-                      scale: 1.05,
+                      scale: 1.02,
                       boxShadow: "0 0 40px rgba(230, 255, 180, 0.6)",
+                      zIndex: 10, // ✅ nổi lên khi hover
                     }}
-                    transition={{ type: "spring", stiffness: 180, damping: 15 }}
-                    className="flex flex-col md:flex-row cursor-pointer rounded-3xl shadow-xl overflow-hidden transition-all duration-300 bg-[#375231] p-8"
+                    transition={{
+                      type: "spring",
+                      stiffness: 180,
+                      damping: 15,
+                    }}
+                    className="relative flex flex-col md:flex-row flex-wrap cursor-pointer rounded-3xl shadow-xl overflow-hidden transition-all duration-300 bg-[#375231] p-8"
                     onClick={() => navigate(`/news/${item.id}`)}
                   >
-                    <div className="flex-shrink-0 w-full md:w-64 mb-4 md:mb-0 md:mr-6 bg-[#4E653A] text-[#C9D7A0] font-bold text-xl flex items-center justify-center rounded-2xl shadow-md p-6">
+                    {/* Left title box */}
+                    <div className="flex-shrink-0 w-full md:w-64 mb-4 md:mb-0 md:mr-6 bg-[#4E653A] text-[#C9D7A0] font-bold text-xl flex items-center justify-center rounded-2xl shadow-md p-6 text-center">
                       {item.title}
                     </div>
 
-                    <div className="flex-1 bg-[#2E4B2B]/90 p-6 rounded-2xl shadow-inner">
-                      <p className="text-[#E0F0C0] text-lg leading-relaxed">
+                    {/* Right content box */}
+                    <div className="flex-1 bg-[#2E4B2B]/90 p-6 rounded-2xl shadow-inner break-words max-w-full overflow-hidden">
+                      <p className="text-[#E0F0C0] text-lg leading-relaxed break-words whitespace-pre-line">
                         {item.content}
                       </p>
                     </div>
