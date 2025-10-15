@@ -5,7 +5,7 @@ const AdminHeader: React.FC = () => {
   return (
     <header className="w-full h-12 bg-[#1e293b] text-white flex items-center justify-between px-6">
       <h1 className="font-bold">
-        <Link to="/admin">Admin</Link>
+        <Link to="/admin"> </Link>
       </h1>
       <div className="flex items-center gap-3">
         <span>Hello, Admin</span>

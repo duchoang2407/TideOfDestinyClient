@@ -29,13 +29,10 @@ const UploadGameFile: React.FC = () => {
       // backend expects a single file field named "file"
       formData.append("file", selectedFile);
 
-      const response = await fetch(
-        "https://localhost:44323/api/Upload/file",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("https://localhost:44333/api/Upload/file", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
 
@@ -115,5 +112,3 @@ const UploadGameFile: React.FC = () => {
 };
 
 export default UploadGameFile;
-
-

@@ -2,8 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import SideBar from "../../component/sidebar/Sidebar";
 import laptop from "../../assest/laptop.png"; // ảnh nền
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
       {/* Sidebar */}
@@ -43,6 +45,7 @@ const AdminDashboard: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/admin/game")}
               className="mt-8 px-8 py-3 bg-orange-400 hover:bg-orange-500 text-white font-semibold rounded-full shadow-lg transition"
             >
               Go to Dashboard

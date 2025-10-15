@@ -28,7 +28,8 @@ const SystemRequirementPage: React.FC = () => {
         className="fixed bottom-6 right-6 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105"
         onClick={async () => {
           try {
-            const url = "https://localhost:44323/api/Download/donwload-lastest-file";
+            const url =
+              "https://localhost:44323/api/Download/donwload-lastest-file";
             const response = await fetch(url, {
               method: "GET",
               // Include credentials if your API requires auth cookies; otherwise omit
@@ -42,9 +43,14 @@ const SystemRequirementPage: React.FC = () => {
             const blob = await response.blob();
 
             // Try to infer filename from Content-Disposition header
-            const disposition = response.headers.get("content-disposition") || "";
-            const match = disposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i);
-            const filename = decodeURIComponent(match?.[1] || match?.[2] || "download");
+            const disposition =
+              response.headers.get("content-disposition") || "";
+            const match = disposition.match(
+              /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i
+            );
+            const filename = decodeURIComponent(
+              match?.[1] || match?.[2] || "download"
+            );
 
             const blobUrl = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -57,7 +63,8 @@ const SystemRequirementPage: React.FC = () => {
           } catch (err) {
             console.error(err);
             // Fallback: navigate directly to the URL (lets browser handle it)
-            window.location.href = "https://localhost:44323/api/Download/donwload-lastest-file";
+            window.location.href =
+              "https://localhost:44333/api/Download/donwload-lastest-file";
           }
         }}
       >
