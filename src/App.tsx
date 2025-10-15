@@ -16,6 +16,7 @@ import AdminHeader from "./component/Header/AdminHeader.tsx";
 import AdminHomePage from "./pages/Admin/AdminHomePage.tsx";
 import GameIntroduction from "./pages/Admin/AdminManager/GameIntroduction.js";
 import UpdateInformation from "./pages/Admin/AdminManager/UpdateInformation.tsx";
+import UploadGameFile from "./pages/Admin/AdminManager/UploadGameFile.tsx";
 
 import PrivateRoute from "./component/PrivateRoute/PrivateRoute.tsx";
 import PlayerHome from "./pages/PlayerPage/PlayerHomePage.tsx";
@@ -93,6 +94,17 @@ const App: React.FC = () => {
                 <>
                   <AdminHeader />
                   <UpdateInformation />
+                </>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/upload"
+            element={
+              <PrivateRoute role="Admin">
+                <>
+                  <AdminHeader />
+                  <UploadGameFile />
                 </>
               </PrivateRoute>
             }
