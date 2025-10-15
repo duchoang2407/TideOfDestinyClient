@@ -10,6 +10,7 @@ const SideBar: React.FC = () => {
   const menuItems = [
     { label: "🎮 Game Introduction", path: "/admin/game" },
     { label: "⚙ Update Information", path: "/admin/update" },
+    { label: "⬆ Upload File Game", path: "/admin/upload" },
   ];
 
   const handleLogout = () => {

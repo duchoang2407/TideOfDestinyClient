@@ -1,7 +1,6 @@
 import React from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
-import Footer from "../component/Footer/Footer";
 
 const SystemRequirementPage: React.FC = () => {
   const tableVariants = {
@@ -27,11 +26,39 @@ const SystemRequirementPage: React.FC = () => {
       {/* Download button */}
       <button
         className="fixed bottom-6 right-6 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105"
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = "/assets/SystemRequirements.pdf";
-          link.download = "SystemRequirements.pdf";
-          link.click();
+        onClick={async () => {
+          try {
+            const url = "https://localhost:44323/api/Download/donwload-lastest-file";
+            const response = await fetch(url, {
+              method: "GET",
+              // Include credentials if your API requires auth cookies; otherwise omit
+              // credentials: "include",
+            });
+
+            if (!response.ok) {
+              throw new Error(`Download failed: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+
+            // Try to infer filename from Content-Disposition header
+            const disposition = response.headers.get("content-disposition") || "";
+            const match = disposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i);
+            const filename = decodeURIComponent(match?.[1] || match?.[2] || "download");
+
+            const blobUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(blobUrl);
+          } catch (err) {
+            console.error(err);
+            // Fallback: navigate directly to the URL (lets browser handle it)
+            window.location.href = "https://localhost:44323/api/Download/donwload-lastest-file";
+          }
         }}
       >
         <Download size={20} />
