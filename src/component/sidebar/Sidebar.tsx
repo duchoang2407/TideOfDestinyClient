@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SideBar: React.FC = () => {
@@ -29,7 +29,12 @@ const SideBar: React.FC = () => {
           {/* Logo */}
           <div className="text-center py-6 border-b border-gray-200">
             <h1 className="text-2xl font-extrabold text-gray-800 tracking-wide">
-              Admin<span className="text-orange-500">Panel</span>
+              <button
+                onClick={() => navigate("/admin")}
+                className="inline-block relative z-50 hover:text-orange-500 transition duration-300"
+              >
+                Admin<span className="text-orange-500">Panel</span>
+              </button>
             </h1>
           </div>
 
