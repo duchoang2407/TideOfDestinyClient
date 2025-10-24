@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../component/config/axiosConfig";
 import { motion, AnimatePresence } from "framer-motion";
 import PagePagination from "../../component/PagePagination";
+import BackGround from "../../assest/Background.png";
 
 interface NewsItem {
   id: number;
@@ -16,7 +17,7 @@ const GameIntroductionPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [clickedId, setClickedId] = useState<number | null>(null);
-  const [direction, setDirection] = useState<1 | -1>(1); // 1: next, -1: prev
+  const [direction, setDirection] = useState<1 | -1>(1);
   const itemsPerPage = 3;
   const navigate = useNavigate();
 
@@ -53,35 +54,33 @@ const GameIntroductionPage: React.FC = () => {
   };
 
   const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
+    enter: (dir: number) => ({ x: dir > 0 ? 200 : -200, opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
+    exit: (dir: number) => ({ x: dir > 0 ? -200 : 200, opacity: 0 }),
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden bg-[#2E4B2B] text-white">
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none -z-10 overflow-visible">
-        <motion.div
-          className="absolute w-[150%] h-[150%] bg-[radial-gradient(circle_at_50%_50%,rgba(144,189,144,0.1),transparent_70%)] blur-3xl"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute w-full h-full bg-[url('/images/smoke.png')] bg-cover opacity-10"
-          animate={{ backgroundPositionX: ["0%", "100%"] }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-        />
+    <div className="relative min-h-screen flex flex-col overflow-hidden text-white font-['Cinzel',serif] pt-28 pb-32">
+      {/* 🌌 Background */}
+      <div
+        className="absolute inset-0 -z-10 bg-cover bg-center opacity-70 blur-[2px] brightness-[0.85]"
+        style={{ backgroundImage: `url(${BackGround})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,220,0.05)] to-[rgba(0,0,0,0.3)]"></div>
       </div>
 
-      <main className="max-w-6xl mx-auto py-16 px-6 pb-48 flex-grow relative z-10">
+      {/* 🌫️ Gradient nối header */}
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
+
+      {/* Nội dung chính */}
+      <main className="max-w-7xl mx-auto py-20 px-6 flex-grow relative z-10">
         <motion.h1
-          className="text-center text-5xl font-extrabold mb-16 text-[#c9d7a0] drop-shadow-[0_0_10px_rgba(200,230,160,0.5)]"
-          initial={{ opacity: 0, y: -30 }}
+          className="text-center text-6xl font-bold mb-20 tracking-widest text-[#f8f5d2] drop-shadow-[0_0_20px_rgba(255,250,200,0.4)]"
+          initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 1 }}
         >
-          GIỚI THIỆU
+          GIỚI THIỆU GAME
         </motion.h1>
 
         {loading ? (
@@ -96,23 +95,19 @@ const GameIntroductionPage: React.FC = () => {
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={page}
-              className="flex flex-col gap-16"
+              className="flex flex-col gap-16 md:gap-20"
               custom={direction}
               initial="enter"
               animate="center"
               exit="exit"
               variants={variants}
-              transition={{ type: "spring", stiffness: 180, damping: 20 }}
+              transition={{ type: "spring", stiffness: 150, damping: 20 }}
             >
               {currentData.map((item, index) => (
                 <motion.div
                   key={item.id}
                   onClick={() => handleCardClick(item.id)}
-                  className="relative rounded-3xl p-6 bg-gradient-to-br from-[#375231] to-[#1f3a1f] border border-[#a0b080]/60 shadow-[0_0_20px_rgba(160,200,128,0.1)] cursor-pointer group"
-                  whileHover={{
-                    scale: 1.03,
-                    boxShadow: "0 0 30px rgba(160,200,128,0.3)",
-                  }}
+                  className="relative rounded-3xl p-8 bg-white/5 backdrop-blur-md border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] cursor-pointer group transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)] hover:scale-[1.02]"
                   animate={
                     clickedId === item.id
                       ? { scale: 1.1, opacity: 0 }
@@ -120,49 +115,40 @@ const GameIntroductionPage: React.FC = () => {
                   }
                   transition={{ type: "spring", stiffness: 180, damping: 15 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 rounded-3xl border border-[#c9d7a0]/30 opacity-0 group-hover:opacity-100 pointer-events-none"
-                    animate={{ rotate: 360 }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  />
-
                   <section className="grid md:grid-cols-2 gap-10 items-center relative z-10">
                     {item.imageUrl && (
                       <motion.img
+                        loading="lazy"
                         src={item.imageUrl}
                         alt={item.title}
-                        className={`rounded-2xl shadow-lg w-full h-80 object-cover ${
+                        className={`rounded-2xl w-full h-80 object-cover shadow-lg ${
                           index % 2 === 1 ? "md:order-2" : ""
                         }`}
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        initial={{ opacity: 0.5, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.6 }}
                       />
                     )}
 
-                    <motion.div
-                      className={`p-6 rounded-2xl min-w-[300px] md:min-w-[500px] min-h-[250px] flex flex-col justify-between bg-[#375231]/70 backdrop-blur-sm border border-[#a0b080]/40 ${
+                    <div
+                      className={`p-8 rounded-2xl bg-gradient-to-br from-[#1f2e27]/70 to-[#2f3d32]/60 backdrop-blur-md border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] ${
                         index % 2 === 1 ? "md:order-1" : ""
                       }`}
                     >
-                      <h2 className="font-bold text-2xl mb-3 text-[#c9d7a0] drop-shadow-[0_0_6px_rgba(200,230,160,0.4)]">
+                      <h2 className="font-bold text-3xl mb-4 text-[#f8f5d2] drop-shadow-[0_0_10px_rgba(255,250,200,0.4)]">
                         {item.title.toUpperCase()}
                       </h2>
-                      <p className="leading-relaxed text-[#e0f0c0] line-clamp-3">
+                      <p className="leading-relaxed text-[#eae6d8] line-clamp-3">
                         {item.content}
                       </p>
                       <motion.p
-                        className="mt-4 text-right text-[#a0b080] font-semibold underline decoration-[#a0b080]/70"
+                        className="mt-6 text-right text-[#d8c87a] font-semibold underline decoration-[#f5e1a4]/50 hover:text-[#fff5c0]"
                         whileHover={{ x: 5 }}
                         transition={{ type: "spring", stiffness: 200 }}
                       >
                         Xem chi tiết →
                       </motion.p>
-                    </motion.div>
+                    </div>
                   </section>
                 </motion.div>
               ))}
@@ -171,9 +157,8 @@ const GameIntroductionPage: React.FC = () => {
         )}
       </main>
 
-      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-10  relative z-10">
+        <div className="flex justify-center mt-12 relative z-10">
           <PagePagination
             total={totalPages}
             current={page}

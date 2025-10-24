@@ -1,10 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---------- GLOBAL ---------- */
 body,
 * {
   cursor: none !important;
 }
+
 /* Ẩn thanh cuộn nhưng vẫn cho phép cuộn */
 ::-webkit-scrollbar {
   display: none;
@@ -14,6 +17,8 @@ body {
   -ms-overflow-style: none; /* IE, Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* ---------- ANIMATIONS ---------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -42,4 +47,186 @@ body {
 
 .animate-scaleUp {
   animation: scaleUp 0.25s ease-out forwards;
+}
+
+/* ---------- SLOW BACKGROUND ANIMATIONS ---------- */
+@keyframes scrollSlow {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 100%;
+  }
+}
+
+@keyframes pulseSlow {
+  0%,
+  100% {
+    opacity: 0.07;
+  }
+  50% {
+    opacity: 0.12;
+  }
+}
+
+.animate-scrollSlow {
+  animation: scrollSlow 120s linear infinite;
+}
+
+.animate-pulseSlow {
+  animation: pulseSlow 8s ease-in-out infinite;
+}
+
+/* ---------- BACKGROUND ASSETS ---------- */
+:root {
+  --stars-url: "/images/stars.webp";
+  --wisps-url: "/images/wisps.webp";
+  --primary-glow: rgba(255, 235, 170, 0.06);
+  --accent-glow: rgba(240, 220, 140, 0.08);
+}
+
+/* ---------- LIGHT & MOTION ---------- */
+@keyframes slow-pan {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-6%) translateY(3%) scale(1.02);
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+@keyframes slow-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+}
+
+@keyframes particles-move {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.06;
+  }
+  50% {
+    transform: translateY(-20px) translateX(8px) scale(1.05);
+    opacity: 0.12;
+  }
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.06;
+  }
+}
+
+/* ---------- BACKGROUND BUILDING BLOCKS ---------- */
+
+/* 1. Radial glow center */
+.radial-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 50% 35%,
+      rgba(255, 245, 210, 0.09),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(200, 230, 170, 0.03),
+      transparent 18%
+    );
+  filter: blur(36px);
+  mix-blend-mode: screen;
+  transform-origin: center;
+  animation: float-slow 12s ease-in-out infinite;
+}
+@keyframes bgFloat {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.03) translateY(-10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+.bg-floating {
+  animation: bgFloat 12s ease-in-out infinite;
+}
+
+/* 4. Particles (CSS generated dots) */
+.particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      circle at 10% 20%,
+      rgba(255, 240, 200, 0.12) 0.6px,
+      transparent 0.7px
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(255, 230, 160, 0.1) 0.6px,
+      transparent 0.7px
+    ),
+    radial-gradient(
+      circle at 40% 70%,
+      rgba(255, 245, 200, 0.08) 0.6px,
+      transparent 0.7px
+    ),
+    radial-gradient(
+      circle at 70% 80%,
+      rgba(200, 230, 170, 0.06) 0.6px,
+      transparent 0.7px
+    );
+  background-size: 200px 200px, 260px 260px, 220px 220px, 300px 300px;
+  opacity: 0.07;
+  filter: blur(1px);
+  animation: particles-move 18s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+/* 5. Vignette / edge glow */
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+}
+
+/* ---------- ACCESSIBILITY ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .radial-glow,
+  .bg-stars,
+  .bg-wisps,
+  .particles {
+    animation: none !important;
+  }
+}
+
+/* ---------- OPTIONAL UTILITIES ---------- */
+.animate-floatSlow {
+  animation: float-slow 12s ease-in-out infinite;
 }
