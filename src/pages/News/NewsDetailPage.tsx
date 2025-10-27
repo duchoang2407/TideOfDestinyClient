@@ -50,7 +50,7 @@ const NewsDetailPage: React.FC = () => {
         {/* Back button */}
         <motion.button
           onClick={() => navigate(-1)}
-          className="text-[#C9D7A0] hover:underline mb-6 flex items-center gap-2 font-medium"
+          className="text-[#C9D7A0] hover:underline mb-6 flex items-center gap-2 font-medium "
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
@@ -79,7 +79,8 @@ const NewsDetailPage: React.FC = () => {
           </p>
         ) : (
           <motion.div
-            className="bg-[#375231] rounded-3xl shadow-2xl p-8 flex flex-col gap-6"
+            className="bg-[#375231] rounded-3xl shadow-2xl p-8 flex flex-col gap-6 w-[800px] h-[600px]
+"
             initial={{ opacity: 0, scale: 0.95, x: 50 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -98,7 +99,7 @@ const NewsDetailPage: React.FC = () => {
 
             {/* Content */}
             <motion.div
-              className="bg-[#2E4B2B]/90 text-[#E0F0C0] rounded-xl p-6 leading-relaxed whitespace-pre-line min-h-[300px] shadow-inner"
+              className="bg-[#2E4B2B]/90 text-[#E0F0C0] rounded-xl p-6 leading-relaxed whitespace-pre-line min-h-[450px] shadow-inner"
               initial={{ opacity: 0, y: 20, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
