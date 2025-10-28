@@ -25,8 +25,10 @@ import LoginModal from "./pages/Login/LoginModal.tsx";
 import RegisterModal from "./pages/RegisterPage/RegisterModal.tsx";
 import ForgotPasswordModal from "./pages/ForgotPasswordPage/ForgotPasswordModal.tsx";
 
-// 🌀 Import animation tools
-import { motion } from "framer-motion";
+// 🪙 Import các trang thanh toán (mới thêm)
+import PurchasePage from "./pages/Payment/PurchasePage.tsx";
+import PaymentSuccessPage from "./pages/Payment/PaymentSuccessPage.tsx";
+import PaymentCancelPage from "./pages/Payment/PaymentCancelPage.tsx";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -61,6 +63,21 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
+
+            {/* 🪙 ROUTES THANH TOÁN */}
+            <Route
+              path="purchase"
+              element={
+                <PrivateRoute>
+                  <PurchasePage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route path="payment-success" element={<PaymentSuccessPage />} />
+            <Route path="payment-cancel" element={<PaymentCancelPage />} />
+
+            {/* fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
 
