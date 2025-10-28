@@ -2,21 +2,40 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../component/config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+}
+
 const PurchasePage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [hasPurchased, setHasPurchased] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+
+  // ✅ Lấy thông tin sản phẩm chính (game)
+  const fetchProduct = async () => {
+    try {
+      const res = await axiosInstance.get("/products/main");
+      setProduct(res.data);
+    } catch (err) {
+      console.error("❌ Error loading product:", err);
+    }
+  };
 
   // ✅ Kiểm tra xem user đã mua game chưa
+  const fetchPurchaseStatus = async () => {
+    try {
+      const res = await axiosInstance.get("/payment/purchase-status");
+      setHasPurchased(res.data.hasPurchased ?? res.data.HasPurchased);
+    } catch (err) {
+      console.error("❌ Error checking purchase status:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPurchaseStatus = async () => {
-      try {
-        const res = await axiosInstance.get("/payment/purchase-status");
-        setHasPurchased(res.data.hasPurchased ?? res.data.HasPurchased);
-      } catch (err) {
-        console.error("❌ Error checking purchase status:", err);
-      }
-    };
+    fetchProduct();
     fetchPurchaseStatus();
   }, []);
 
@@ -59,11 +78,14 @@ const PurchasePage: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <div className="bg-white rounded-2xl p-8 shadow-xl w-96 text-center">
         <h2 className="text-3xl font-bold mb-4 text-gray-800">
-          Mua game Tide of Destiny
+          {product?.name ?? "Tide of Destiny"}
         </h2>
 
         <p className="text-gray-600 mb-6 text-lg">
-          Giá: <b>250.000₫</b>
+          Giá:{" "}
+          <b className="text-green-700">
+            {product?.price ? product.price.toLocaleString() : "—"}₫
+          </b>
         </p>
 
         {hasPurchased ? (
