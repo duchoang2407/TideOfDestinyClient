@@ -10,6 +10,7 @@ interface GameFile {
 }
 
 const UploadGameFile: React.FC = () => {
+  const url = import.meta.env.VITE_API_BASE_URL;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -38,7 +39,7 @@ const UploadGameFile: React.FC = () => {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const response = await fetch("https://localhost:44323/api/Upload/file", {
+      const response = await fetch(`${url}/Upload/file`, {
         method: "POST",
         body: formData,
       });
@@ -63,7 +64,7 @@ const UploadGameFile: React.FC = () => {
   const fetchGameFiles = async () => {
     try {
       setIsLoadingList(true);
-      const response = await fetch("https://localhost:44323/api/Upload");
+      const response = await fetch(`${url}/Upload`);
 
       if (!response.ok) throw new Error("Không thể tải danh sách file.");
 
