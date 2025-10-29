@@ -5,13 +5,64 @@ import { motion, AnimatePresence } from "framer-motion";
 import PagePagination from "../../component/PagePagination";
 import BackGround from "../../assest/Background.png";
 
+/* =========================
+   Types
+========================= */
 interface NewsItem {
   id: number;
   title: string;
   content: string;
-  imageUrl?: string;
+  imageUrl?: string; // FE-processed first image url (from imageUrls[0] or BE imageUrl)
+  imageUrls?: string[]; // raw array from BE (if any)
 }
 
+/* =========================
+   Image Fallback Helper
+========================= */
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // e.g. https://localhost:44333/api
+const API_ROOT = API_BASE.replace(/\/api\/?$/, ""); // e.g. https://localhost:44333
+const isHttp = (s?: string) => !!s && /^https?:\/\//i.test(s || "");
+
+const buildImageCandidates = (raw?: string) => {
+  if (!raw) return [] as string[];
+  if (isHttp(raw)) return [raw];
+
+  // If backend returns just an id/filename, try common patterns:
+  return [
+    `${API_BASE}/News/image/${raw}`,
+    `${API_BASE}/News/image?fileName=${encodeURIComponent(raw)}`,
+    `${API_ROOT}/${raw}`,
+    `${API_ROOT}/uploads/${raw}`,
+  ];
+};
+
+const SmartImage: React.FC<{
+  raw: string | undefined;
+  alt: string;
+  className?: string;
+  motionProps?: any; // pass framer-motion props here
+}> = ({ raw, alt, className = "", motionProps = {} }) => {
+  const candidates = buildImageCandidates(raw);
+  const [idx, setIdx] = React.useState(0);
+
+  if (!candidates.length) return null;
+
+  const src = candidates[Math.min(idx, candidates.length - 1)];
+  return (
+    <motion.img
+      {...motionProps}
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setIdx((i) => i + 1)} // try next url when failed
+      onLoad={() => console.debug("🖼 loaded:", src)}
+    />
+  );
+};
+
+/* =========================
+   Page Component
+========================= */
 const GameIntroductionPage: React.FC = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,15 +76,38 @@ const GameIntroductionPage: React.FC = () => {
     const fetchIntro = async () => {
       try {
         const response = await axiosInstance.get("/News", {
-          params: { category: 1 },
+          params: { category: 1 }, // ✅ đúng theo Swagger
         });
-        setNews(response.data);
-      } catch (error: any) {
-        console.error("Error fetching game intro:", error.message);
+
+        console.log("✅ API DATA:", response.data);
+
+        // Chuẩn hoá ảnh: ưu tiên imageUrls[0] nếu có
+        const processed: NewsItem[] = (response.data || []).map((it: any) => ({
+          id: it.id,
+          title: it.title,
+          content: it.content,
+          imageUrl:
+            it.imageUrls && it.imageUrls.length > 0
+              ? it.imageUrls[0].url
+              : null,
+        }));
+
+        setNews(processed);
+
+        setNews(processed);
+
+        // Chỉ hiển thị bài có ảnh để không vỡ layout
+        const filtered = processed.filter(
+          (x) => x.imageUrl && x.imageUrl !== ""
+        );
+        setNews(filtered);
+      } catch (error) {
+        console.error("❌ Error fetching game intro:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchIntro();
   }, []);
 
@@ -51,6 +125,7 @@ const GameIntroductionPage: React.FC = () => {
   const handlePageChange = (newPage: number) => {
     setDirection(newPage > page ? 1 : -1);
     setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const variants = {
@@ -61,18 +136,18 @@ const GameIntroductionPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden text-white font-['Cinzel',serif] pt-28 pb-32">
-      {/* 🌌 Background */}
+      {/* Background */}
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center opacity-70 blur-[2px] brightness-[0.85]"
         style={{ backgroundImage: `url(${BackGround})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,220,0.05)] to-[rgba(0,0,0,0.3)]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,220,0.05)] to-[rgba(0,0,0,0.3)]" />
       </div>
 
-      {/* 🌫️ Gradient nối header */}
+      {/* Gradient nối header */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
 
-      {/* Nội dung chính */}
+      {/* Nội dung */}
       <main className="max-w-7xl mx-auto py-20 px-6 flex-grow relative z-10">
         <motion.h1
           className="text-center text-6xl font-bold mb-20 tracking-widest text-[#f8f5d2] drop-shadow-[0_0_20px_rgba(255,250,200,0.4)]"
@@ -84,9 +159,15 @@ const GameIntroductionPage: React.FC = () => {
         </motion.h1>
 
         {loading ? (
-          <p className="text-center text-lg text-gray-300">
-            Đang tải dữ liệu...
-          </p>
+          // Skeleton khi tải
+          <div className="space-y-8">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-white/10 rounded-3xl p-6 h-72 animate-pulse"
+              />
+            ))}
+          </div>
         ) : currentData.length === 0 ? (
           <p className="text-center text-lg text-gray-300">
             Không có dữ liệu nào.
@@ -107,7 +188,9 @@ const GameIntroductionPage: React.FC = () => {
                 <motion.div
                   key={item.id}
                   onClick={() => handleCardClick(item.id)}
-                  className="relative rounded-3xl p-8 bg-white/5 backdrop-blur-md border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] cursor-pointer group transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)] hover:scale-[1.02]"
+                  className="relative rounded-3xl p-8 bg-white/5 backdrop-blur-md border border-[rgba(255,255,255,0.25)]
+                             shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] cursor-pointer group
+                             transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)] hover:scale-[1.02]"
                   animate={
                     clickedId === item.id
                       ? { scale: 1.1, opacity: 0 }
@@ -116,27 +199,27 @@ const GameIntroductionPage: React.FC = () => {
                   transition={{ type: "spring", stiffness: 180, damping: 15 }}
                 >
                   <section className="grid md:grid-cols-2 gap-10 items-center relative z-10">
-                    {item.imageUrl && (
-                      <motion.img
-                        loading="lazy"
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className={`rounded-2xl w-full h-80 object-cover shadow-lg ${
-                          index % 2 === 1 ? "md:order-2" : ""
-                        }`}
-                        initial={{ opacity: 0.5, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6 }}
-                      />
-                    )}
+                    <SmartImage
+                      raw={item.imageUrl}
+                      alt={item.title}
+                      className={`rounded-2xl w-full h-80 object-cover shadow-lg ${
+                        index % 2 === 1 ? "md:order-2" : ""
+                      }`}
+                      motionProps={{
+                        loading: "lazy",
+                        initial: { opacity: 0.6, scale: 0.97 },
+                        animate: { opacity: 1, scale: 1 },
+                        transition: { duration: 0.6 },
+                      }}
+                    />
 
                     <div
-                      className={`p-8 rounded-2xl bg-gradient-to-br from-[#1f2e27]/70 to-[#2f3d32]/60 backdrop-blur-md border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] ${
-                        index % 2 === 1 ? "md:order-1" : ""
-                      }`}
+                      className={`p-8 rounded-2xl bg-gradient-to-br from-[#1f2e27]/70 to-[#2f3d32]/60 backdrop-blur-md
+                                  border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]
+                                  ${index % 2 === 1 ? "md:order-1" : ""}`}
                     >
                       <h2 className="font-bold text-3xl mb-4 text-[#f8f5d2] drop-shadow-[0_0_10px_rgba(255,250,200,0.4)]">
-                        {item.title.toUpperCase()}
+                        {item.title?.toUpperCase()}
                       </h2>
                       <p className="leading-relaxed text-[#eae6d8] line-clamp-3">
                         {item.content}
