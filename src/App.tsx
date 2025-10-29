@@ -29,12 +29,15 @@ import ForgotPasswordModal from "./pages/ForgotPasswordPage/ForgotPasswordModal.
 import PurchasePage from "./pages/Payment/PurchasePage.tsx";
 import PaymentSuccessPage from "./pages/Payment/PaymentSuccessPage.tsx";
 import PaymentCancelPage from "./pages/Payment/PaymentCancelPage.tsx";
+import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
   const [isForgotOpen, setForgotOpen] = useState(false);
-
+  <ToastContainer />;
   return (
     <GoogleOAuthProvider clientId="467475853265-i7sdj6otkta2r2o6mpbe1lc8rosea8ep.apps.googleusercontent.com">
       <CustomCursor />
@@ -122,6 +125,17 @@ const App: React.FC = () => {
                 <>
                   <AdminHeader />
                   <UploadGameFile />
+                </>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <PrivateRoute role="Admin">
+                <>
+                  <AdminHeader />
+                  <ProductManager />
                 </>
               </PrivateRoute>
             }
