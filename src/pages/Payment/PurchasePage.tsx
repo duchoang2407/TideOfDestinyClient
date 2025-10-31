@@ -44,17 +44,21 @@ const PurchasePage: React.FC = () => {
     try {
       setLoading(true);
 
-      const returnUrl = `${window.location.origin}/payment-success`;
-      const cancelUrl = `${window.location.origin}/payment-cancel`;
+      if (!product?.id) {
+        alert("Không tìm thấy sản phẩm để thanh toán!");
+        return;
+      }
 
       const res = await axiosInstance.post("/payment/create-payment-link", {
-        returnUrl,
-        cancelUrl,
+        productId: product.id,
+        amount: product.price, // ❓ nếu backend yêu cầu số tiền
+        returnUrl: `${window.location.origin}/payment-success`,
+        cancelUrl: `${window.location.origin}/payment-cancel`,
       });
 
       window.location.href = res.data.checkoutUrl;
     } catch (err: any) {
-      console.error("❌ Payment error:", err);
+      console.error("❌ Payment error:", err.response?.data);
 
       if (err.response?.status === 401) {
         alert("Bạn cần đăng nhập để mua game.");
