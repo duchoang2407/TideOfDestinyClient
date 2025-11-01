@@ -76,7 +76,7 @@ const GameIntroductionPage: React.FC = () => {
     const fetchIntro = async () => {
       try {
         const response = await axiosInstance.get("/News", {
-          params: { category: 1 }, // ✅ đúng theo Swagger
+          params: { newsCategory: 1 }, // ✅ đúng theo Swagger
         });
 
         console.log("✅ API DATA:", response.data);
