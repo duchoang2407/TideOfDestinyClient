@@ -2,6 +2,8 @@ import React from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import axiosInstance from "../component/config/axiosConfig";
 
 const SystemRequirementPage: React.FC = () => {
@@ -21,8 +23,10 @@ const SystemRequirementPage: React.FC = () => {
       const hasPurchased = res.data?.hasPurchased ?? res.data?.HasPurchased;
 
       if (!hasPurchased) {
-        alert("⚠️ Bạn chưa mua game. Mua ngay để tải!");
-        navigate("/purchase");
+        toast.warning("Bạn chưa mua game. Mua ngay để tải!");
+        setTimeout(() => {
+          navigate("/purchase");
+        }, 2500);
         return;
       }
 

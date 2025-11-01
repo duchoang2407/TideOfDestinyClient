@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../component/config/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Product {
   id: string;
@@ -45,7 +46,7 @@ const PurchasePage: React.FC = () => {
       setLoading(true);
 
       if (!product?.id) {
-        alert("Không tìm thấy sản phẩm để thanh toán!");
+        toast.error("Không tìm thấy sản phẩm để thanh toán!");
         return;
       }
 
@@ -61,18 +62,20 @@ const PurchasePage: React.FC = () => {
       console.error("❌ Payment error:", err.response?.data);
 
       if (err.response?.status === 401) {
-        alert("Bạn cần đăng nhập để mua game.");
+        toast.warning("Bạn cần đăng nhập để mua game!");
         navigate("/login");
         return;
       }
 
       if (err.response?.status === 409) {
-        alert("Bạn đã mua game rồi!");
+        toast.info("Bạn đã mua game rồi!");
         setHasPurchased(true);
         return;
       }
 
-      alert(err.response?.data?.message ?? "Lỗi khi tạo link thanh toán.");
+      toast.error(
+        err.response?.data?.message ?? "Lỗi khi tạo link thanh toán!"
+      );
     } finally {
       setLoading(false);
     }

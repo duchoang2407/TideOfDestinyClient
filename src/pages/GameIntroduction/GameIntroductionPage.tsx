@@ -136,13 +136,15 @@ const GameIntroductionPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden text-white font-['Cinzel',serif] pt-28 pb-32">
-      {/* Background */}
+      {/* BACKGROUND */}
       <div
-        className="absolute inset-0 -z-10 bg-cover bg-center opacity-70 blur-[2px] brightness-[0.85]"
+        className="absolute inset-0 -z-20 bg-cover bg-center brightness-[0.55]"
         style={{ backgroundImage: `url(${BackGround})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,220,0.05)] to-[rgba(0,0,0,0.3)]" />
-      </div>
+      />
+      <div className="absolute inset-0 -z-10 bg-black/55" />
+
+      {/* Gradient nối header */}
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
 
       {/* Gradient nối header */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
@@ -150,7 +152,9 @@ const GameIntroductionPage: React.FC = () => {
       {/* Nội dung */}
       <main className="max-w-7xl mx-auto py-20 px-6 flex-grow relative z-10">
         <motion.h1
-          className="text-center text-6xl font-bold mb-20 tracking-widest text-[#f8f5d2] drop-shadow-[0_0_20px_rgba(255,250,200,0.4)]"
+          className="text-5xl md:text-6xl font-extrabold text-center mb-14
+                   bg-gradient-to-b from-yellow-200 to-yellow-600 bg-clip-text
+                   text-transparent drop-shadow-[0_0_35px_rgba(255,230,150,0.55)]"
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
