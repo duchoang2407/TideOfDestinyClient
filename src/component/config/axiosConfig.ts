@@ -8,7 +8,7 @@ const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true, // nếu BE cho phép AllowCredentials
+  withCredentials: true,
 });
 
 // ✅ Thêm token vào tất cả request
