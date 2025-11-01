@@ -75,8 +75,8 @@ const GameIntroductionPage: React.FC = () => {
   useEffect(() => {
     const fetchIntro = async () => {
       try {
-        const response = await axiosInstance.get("/api/News", {
-          params: { category: "Action" },
+        const response = await axiosInstance.get("/News", {
+          params: { category: 1 }, // hoặc enum bạn dùng
         });
 
         console.log("✅ API DATA:", response.data);
