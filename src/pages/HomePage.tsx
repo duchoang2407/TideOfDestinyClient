@@ -6,8 +6,9 @@ import { Download } from "lucide-react";
 import BG from "../assest/bg.png";
 import bg2 from "../assest/bg2.png";
 import bg3 from "../assest/bg3.png";
-import steam from "../assest/steam.svg";
-import epicgames from "../assest/epicgames.svg";
+// import SteamIcon from "../assets/steam.svg";
+
+// import epicgames from "../assest/epicgames.svg";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -67,8 +68,8 @@ const HomePage: React.FC = () => {
       <section className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6 py-20">
         {[
           { n: "PC", i: <Download size={26} /> },
-          { n: "Epic Games", i: <img src={epicgames} className="w-7" /> },
-          { n: "Steam", i: <img src={steam} className="w-7" /> },
+          // { n: "Epic Games", i: <img src={epicgames} className="w-7" /> },
+          // { n: "Steam", i: <img src={SteamIcon} className="w-7" /> },
         ].map((p, idx) => (
           <motion.div
             key={idx}
