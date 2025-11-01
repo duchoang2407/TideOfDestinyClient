@@ -75,8 +75,8 @@ const GameIntroductionPage: React.FC = () => {
   useEffect(() => {
     const fetchIntro = async () => {
       try {
-        const response = await axiosInstance.get("/News", {
-          params: { newsCategory: 1 }, // ✅ đúng theo Swagger
+        const response = await axiosInstance.get("/api/News", {
+          params: { category: "Action" },
         });
 
         console.log("✅ API DATA:", response.data);
