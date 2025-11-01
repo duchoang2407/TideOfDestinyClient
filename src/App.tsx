@@ -30,16 +30,19 @@ import PurchasePage from "./pages/Payment/PurchasePage.tsx";
 import PaymentSuccessPage from "./pages/Payment/PaymentSuccessPage.tsx";
 import PaymentCancelPage from "./pages/Payment/PaymentCancelPage.tsx";
 import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
-import { ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
+import OrderHistoryPage from "./pages/history/OrderHistoryPage.tsx";
+import { ToastContainer } from "react-toastify";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
   const [isForgotOpen, setForgotOpen] = useState(false);
-  <ToastContainer />;
+
   return (
     <GoogleOAuthProvider clientId="467475853265-i7sdj6otkta2r2o6mpbe1lc8rosea8ep.apps.googleusercontent.com">
+      <ToastContainer position="top-right" autoClose={2500} />
       <CustomCursor />
       <BrowserRouter>
         <Routes>
@@ -73,6 +76,15 @@ const App: React.FC = () => {
               element={
                 <PrivateRoute>
                   <PurchasePage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="order-history"
+              element={
+                <PrivateRoute role="Player">
+                  <OrderHistoryPage />
                 </PrivateRoute>
               }
             />
