@@ -25,8 +25,15 @@ import LoginModal from "./pages/Login/LoginModal.tsx";
 import RegisterModal from "./pages/RegisterPage/RegisterModal.tsx";
 import ForgotPasswordModal from "./pages/ForgotPasswordPage/ForgotPasswordModal.tsx";
 
-// 🌀 Import animation tools
-import { motion } from "framer-motion";
+// 🪙 Import các trang thanh toán (mới thêm)
+import PurchasePage from "./pages/Payment/PurchasePage.tsx";
+import PaymentSuccessPage from "./pages/Payment/PaymentSuccessPage.tsx";
+import PaymentCancelPage from "./pages/Payment/PaymentCancelPage.tsx";
+import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
+
+import "react-toastify/dist/ReactToastify.css";
+import OrderHistoryPage from "./pages/history/OrderHistoryPage.tsx";
+import { ToastContainer } from "react-toastify";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -35,6 +42,7 @@ const App: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId="467475853265-i7sdj6otkta2r2o6mpbe1lc8rosea8ep.apps.googleusercontent.com">
+      <ToastContainer position="top-right" autoClose={2500} />
       <CustomCursor />
       <BrowserRouter>
         <Routes>
@@ -61,6 +69,30 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
+
+            {/* 🪙 ROUTES THANH TOÁN */}
+            <Route
+              path="purchase"
+              element={
+                <PrivateRoute>
+                  <PurchasePage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="order-history"
+              element={
+                <PrivateRoute role="Player">
+                  <OrderHistoryPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route path="payment-success" element={<PaymentSuccessPage />} />
+            <Route path="payment-cancel" element={<PaymentCancelPage />} />
+
+            {/* fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
 
@@ -105,6 +137,17 @@ const App: React.FC = () => {
                 <>
                   <AdminHeader />
                   <UploadGameFile />
+                </>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <PrivateRoute role="Admin">
+                <>
+                  <AdminHeader />
+                  <ProductManager />
                 </>
               </PrivateRoute>
             }
