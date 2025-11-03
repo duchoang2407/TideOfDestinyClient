@@ -30,8 +30,10 @@ const SystemRequirementPage: React.FC = () => {
         return;
       }
 
-      const url = "https://localhost:44333/api/Download/donwload-lastest-file";
-      const response = await fetch(url);
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/api/Download/donwload-lastest-file`;
+      const response = await fetch(url, { method: "GET" });
 
       if (!response.ok) throw new Error("Download failed");
 
