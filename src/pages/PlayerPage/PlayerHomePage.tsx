@@ -1,8 +1,8 @@
 import React from "react";
-import Footer from "../../component/Footer/Footer";
+
 import BG from "../../assest/bg.png";
-import epicgames from "../../assest/epicgames.svg";
-import steam from "../../assest/steam.svg";
+// import epicgames from "../../assest/epicgames.svg";
+// import steam from "../../assest/steam.svg";
 import bg2 from "../../assest/bg2.png";
 import bg3 from "../../assest/bg3.png";
 
@@ -43,23 +43,23 @@ const PlayerHomePage: React.FC = () => {
                 <button className="bg-[#2f301e] border-solid border-[white] border-2 px-4 py-2 rounded hover:bg-green-900 transition flex items-center gap-2">
                   Tải xuống PC
                 </button>
-                <button className="bg-[#2f301e] border-solid border-[white] border-2 px-4 py-2 rounded hover:bg-green-900 transition flex items-center gap-2">
+                {/* <button className="bg-[#2f301e] border-solid border-[white] border-2 px-4 py-2 rounded hover:bg-green-900 transition flex items-center gap-2">
                   <img
                     src={epicgames}
                     alt="Epic Games"
                     className="w-5 h-5 object-contain"
                   />
                   <span>Epic</span>
-                </button>
+                </button> */}
 
-                <button className="bg-[#2f301e] border-solid border-[white] border-2 px-4 py-2 rounded hover:bg-green-900 transition flex items-center gap-2">
+                {/* <button className="bg-[#2f301e] border-solid border-[white] border-2 px-4 py-2 rounded hover:bg-green-900 transition flex items-center gap-2">
                   <img
                     src={steam}
                     alt="Steam"
                     className="w-5 h-5 object-contain"
                   />
                   <span>Steam</span>
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
