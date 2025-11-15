@@ -34,7 +34,7 @@ import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
 import "react-toastify/dist/ReactToastify.css";
 import OrderHistoryPage from "./pages/history/OrderHistoryPage.tsx";
 import { ToastContainer } from "react-toastify";
-import Character from "./pages/Characters/characters.tsx";
+import Character from "./pages/Characters/Characters.tsx";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
