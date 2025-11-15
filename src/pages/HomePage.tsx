@@ -173,8 +173,8 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* =================== FEATURES =================== */}
-      <section className="bg-black py-20 px-6">
-        <h2 className="text-center text-3xl font-bold text-yellow-300 mb-10">
+      <section className="relative z-10 bg-black py-20 px-6">
+        <h2 className="text-center text-3xl font-bold text-yellow-300 mb-10" style={{ opacity: 1, display: 'block' }}>
           Những điểm nổi bật
         </h2>
 
@@ -184,17 +184,14 @@ const HomePage: React.FC = () => {
             { t: "Cốt truyện sử thi", d: "Khơi dậy hào khí dân tộc trong từng nhiệm vụ." },
             { t: "Nhân vật truyền thuyết", d: "Hóa thân các anh hùng có thật trong lịch sử." }
           ].map((f, i) => (
-            <motion.div
+            <div
               key={i}
               className="bg-[#161616] border border-yellow-600/20 p-6 rounded-xl text-center shadow-xl 
                          hover:scale-105 transition"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
             >
               <h3 className="text-yellow-300 text-xl font-bold mb-2">{f.t}</h3>
               <p className="text-gray-300">{f.d}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -215,16 +212,13 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* =================== STORY TEASER =================== */}
-      <section className="bg-black py-24 px-6">
+      <section className="relative z-10 bg-black py-24 px-6">
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
           className="max-w-4xl mx-auto text-center text-lg md:text-xl text-gray-200 leading-relaxed"
+          style={{ opacity: 1, display: 'block' }}
         >
           “Nếu lịch sử tái hiện ngay trước mắt bạn… liệu bạn có đủ dũng khí để trở thành người viết tiếp nó?”
-        </motion.p>
+          </motion.p>
       </section>
 
     </section>
@@ -232,3 +226,5 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+
+// Fixed closing tag
