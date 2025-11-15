@@ -22,7 +22,6 @@ const HomePage: React.FC = () => {
     const sprite = new Image();
     sprite.src = idleSprite;
 
-    // Sprite 1536x1536, 3x3 => mỗi frame 512
     const cols = 3;
     const rows = 3;
     const FRAME_W = 512;
@@ -72,7 +71,9 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen bg-black text-white overflow-hidden">
+    // 🚨 FIXED → removed overflow-hidden
+    <section className="relative w-full min-h-screen bg-black text-white">
+
       {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -97,11 +98,9 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          Hành trình huyền thoại, hồi sinh lịch sử Việt Nam theo cách bạn chưa
-          từng thấy!
+          Hành trình huyền thoại, hồi sinh lịch sử Việt Nam theo cách bạn chưa từng thấy!
         </motion.p>
 
-        {/* BUTTON */}
         <motion.button
           onClick={() => navigate("/gameintroduction")}
           className="mt-10 border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black 
@@ -181,27 +180,17 @@ const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           {[
-            {
-              t: "Đồ họa hoành tráng",
-              d: "Tái hiện Việt Nam cổ xưa cực kỳ chân thật.",
-            },
-            {
-              t: "Cốt truyện sử thi",
-              d: "Khơi dậy hào khí dân tộc trong từng nhiệm vụ.",
-            },
-            {
-              t: "Nhân vật truyền thuyết",
-              d: "Hóa thân các anh hùng có thật trong lịch sử.",
-            },
+            { t: "Đồ họa hoành tráng", d: "Tái hiện Việt Nam cổ xưa cực kỳ chân thật." },
+            { t: "Cốt truyện sử thi", d: "Khơi dậy hào khí dân tộc trong từng nhiệm vụ." },
+            { t: "Nhân vật truyền thuyết", d: "Hóa thân các anh hùng có thật trong lịch sử." }
           ].map((f, i) => (
             <motion.div
               key={i}
               className="bg-[#161616] border border-yellow-600/20 p-6 rounded-xl text-center shadow-xl 
                          hover:scale-105 transition"
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.2 }}
             >
               <h3 className="text-yellow-300 text-xl font-bold mb-2">{f.t}</h3>
               <p className="text-gray-300">{f.d}</p>
@@ -211,15 +200,17 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* =================== SLIDER =================== */}
-      <section className="relative z-10 bg-black py-14 overflow-hidden">
-        <div className="flex gap-6 animate-scroll">
-          {[bg2, bg3, BG, bg2, bg3].map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              className="w-[260px] h-[150px] object-cover rounded-lg shadow-xl"
-            />
-          ))}
+      <section className="relative z-10 bg-black py-14">
+        <div className="overflow-hidden">
+          <div className="flex gap-6 animate-scroll">
+            {[bg2, bg3, BG, bg2, bg3, BG, bg2, bg3, BG, bg2, bg3, BG].map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                className="w-[260px] h-[150px] object-cover rounded-lg shadow-xl"
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -232,10 +223,10 @@ const HomePage: React.FC = () => {
           transition={{ duration: 1 }}
           className="max-w-4xl mx-auto text-center text-lg md:text-xl text-gray-200 leading-relaxed"
         >
-          “Nếu lịch sử tái hiện ngay trước mắt bạn… liệu bạn có đủ dũng khí để
-          trở thành người viết tiếp nó?”
+          “Nếu lịch sử tái hiện ngay trước mắt bạn… liệu bạn có đủ dũng khí để trở thành người viết tiếp nó?”
         </motion.p>
       </section>
+
     </section>
   );
 };

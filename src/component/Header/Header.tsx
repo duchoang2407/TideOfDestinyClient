@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assest/Logo 3.png";
 
 interface HeaderProps {
   openLogin: () => void;
@@ -51,9 +52,9 @@ const Header: React.FC<HeaderProps> = ({ openLogin }) => {
         <div>
           <Link
             to="/"
-            className="text-2xl font-bold tracking-wide hover:text-[#aef4ff] transition-all"
+            className="hover:opacity-80 transition-all"
           >
-            LOGO
+            <img src={logo} alt="Logo" className="h-[72px] w-auto scale-x-150" />
           </Link>
         </div>
 
