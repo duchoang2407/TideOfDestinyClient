@@ -18,6 +18,7 @@ const NewsPage: React.FC = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const itemsPerPage = 3;
   const navigate = useNavigate();
 
@@ -38,19 +39,29 @@ const NewsPage: React.FC = () => {
   }, []);
 
   const totalPages = Math.ceil(news.length / itemsPerPage);
+  const changePage = (newPage: number) => {
+    setDirection(newPage > page ? 1 : -1);
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const startIndex = page * itemsPerPage;
   const currentData = news.slice(startIndex, startIndex + itemsPerPage);
 
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 200 : -200, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -200 : 200, opacity: 0 }),
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col text-white font-['Cinzel',serif] pt-32 pb-28">
-      {/* BACKGROUND */}
       <div
         className="absolute inset-0 -z-20 bg-cover bg-center brightness-[0.55]"
         style={{ backgroundImage: `url(${BackGround})` }}
       />
       <div className="absolute inset-0 -z-10 bg-black/55" />
 
-      {/* HEADER */}
       <motion.h1
         className="text-5xl md:text-6xl font-extrabold text-center mb-14
                    bg-gradient-to-b from-yellow-200 to-yellow-600 bg-clip-text
@@ -64,20 +75,21 @@ const NewsPage: React.FC = () => {
 
       <main className="w-full max-w-[90%] mx-auto space-y-10">
         {loading ? (
-          // ✅ Skeleton loading
           <div className="space-y-8 animate-pulse">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-48 bg-white/10 rounded-2xl" />
             ))}
           </div>
         ) : (
-          <AnimatePresence mode="wait">
+          <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={page}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.35 }}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4 }}
               className="space-y-10"
             >
               {currentData.map((item) => (
@@ -94,7 +106,6 @@ const NewsPage: React.FC = () => {
                     boxShadow: "0 0 45px rgba(255,220,110,0.35)",
                   }}
                 >
-                  {/* IMAGE */}
                   {item.imageUrl && (
                     <div className="w-56 h-full overflow-hidden flex-shrink-0">
                       <img
@@ -104,19 +115,16 @@ const NewsPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* CONTENT */}
                   <div className="flex flex-col justify-between flex-1 p-6">
                     <div>
                       <h3 className="text-2xl font-bold text-yellow-300 line-clamp-2 drop-shadow-md">
                         {item.title}
                       </h3>
-
                       <p className="text-gray-200 text-base mt-2 line-clamp-2">
                         {item.content}
                       </p>
                     </div>
 
-                    {/* DATE + READ MORE */}
                     <div className="flex justify-between items-center mt-4">
                       {item.publishedAt && (
                         <span className="flex items-center gap-2 text-sm text-yellow-200/70">
@@ -142,13 +150,12 @@ const NewsPage: React.FC = () => {
         )}
       </main>
 
-      {/* PAGINATION ✅ */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-12">
           <PagePagination
             total={totalPages}
             current={page}
-            onChange={setPage}
+            onChange={changePage}
           />
         </div>
       )}
