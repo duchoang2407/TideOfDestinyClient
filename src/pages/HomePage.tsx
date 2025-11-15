@@ -180,9 +180,9 @@ const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           {[
-            { t: "Đồ họa hoành tráng", d: "Tái hiện Việt Nam cổ xưa cực kỳ chân thật." },
-            { t: "Cốt truyện sử thi", d: "Khơi dậy hào khí dân tộc trong từng nhiệm vụ." },
-            { t: "Nhân vật truyền thuyết", d: "Hóa thân các anh hùng có thật trong lịch sử." }
+            { t: "Tiếp cận lịch sử dễ hiểu", d: "Truyền tải sự kiện và bối cảnh lịch sử bằng ngôn ngữ gần gũi, dễ tiếp nhận với mọi người chơi." },
+            { t: "Lịch sử dưới góc nhìn mới", d: "Mang đến trải nghiệm lịch sử qua lăng kính của người dân thời kỳ kháng chiến." },
+            { t: "Nhân vật truyển cảm", d: "Hóa thân thành góc nhìn của nhân vật để cảm nhận sự khó khăn trong những quyết định." }
           ].map((f, i) => (
             <div
               key={i}
