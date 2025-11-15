@@ -34,6 +34,7 @@ import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
 import "react-toastify/dist/ReactToastify.css";
 import OrderHistoryPage from "./pages/history/OrderHistoryPage.tsx";
 import { ToastContainer } from "react-toastify";
+import Character from "./pages/Characters/Characters.tsx";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -49,6 +50,8 @@ const App: React.FC = () => {
           {/* --- USER ROUTES --- */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
+            <Route path="character" element={<Character />} />{" "}
+            {/* ✅ THÊM Ở ĐÂY */}
             <Route path="gameintroduction" element={<GameIntroductionPage />} />
             <Route
               path="systemrequirements"
@@ -69,7 +72,6 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
-
             {/* 🪙 ROUTES THANH TOÁN */}
             <Route
               path="purchase"
@@ -79,7 +81,6 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
-
             <Route
               path="order-history"
               element={
@@ -88,10 +89,8 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
-
             <Route path="payment-success" element={<PaymentSuccessPage />} />
             <Route path="payment-cancel" element={<PaymentCancelPage />} />
-
             {/* fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Route>

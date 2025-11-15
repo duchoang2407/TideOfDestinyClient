@@ -10,10 +10,10 @@ const SideBar: React.FC = () => {
   const menuItems = [
     { label: "🎮 Game Introduction", path: "/admin/game" },
     { label: "⚙ Update Information", path: "/admin/update" },
-    { label: "⬆ Upload File Game", path: "/admin/upload" },
+    // { label: "⬆ Upload File Game", path: "/admin/upload" },
 
-    // ✅ Mục mới dành cho Admin quản lý sản phẩm
-    { label: "🛒 Manage Products", path: "/admin/products" },
+    // // ✅ Mục mới dành cho Admin quản lý sản phẩm
+    // { label: "🛒 Manage Products", path: "/admin/products" },
   ];
 
   const handleLogout = () => {

@@ -12,22 +12,20 @@ interface NewsItem {
   id: number;
   title: string;
   content: string;
-  imageUrl?: string; // FE-processed first image url (from imageUrls[0] or BE imageUrl)
-  imageUrls?: string[]; // raw array from BE (if any)
+  imageUrl?: string;
+  imageUrls?: string[];
 }
 
 /* =========================
    Image Fallback Helper
 ========================= */
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // e.g. https://localhost:44333/api
-const API_ROOT = API_BASE.replace(/\/api\/?$/, ""); // e.g. https://localhost:44333
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_ROOT = API_BASE.replace(/\/api\/?$/, "");
 const isHttp = (s?: string) => !!s && /^https?:\/\//i.test(s || "");
 
 const buildImageCandidates = (raw?: string) => {
-  if (!raw) return [] as string[];
+  if (!raw) return [];
   if (isHttp(raw)) return [raw];
-
-  // If backend returns just an id/filename, try common patterns:
   return [
     `${API_BASE}/News/image/${raw}`,
     `${API_BASE}/News/image?fileName=${encodeURIComponent(raw)}`,
@@ -40,22 +38,20 @@ const SmartImage: React.FC<{
   raw: string | undefined;
   alt: string;
   className?: string;
-  motionProps?: any; // pass framer-motion props here
+  motionProps?: any;
 }> = ({ raw, alt, className = "", motionProps = {} }) => {
   const candidates = buildImageCandidates(raw);
   const [idx, setIdx] = React.useState(0);
 
   if (!candidates.length) return null;
 
-  const src = candidates[Math.min(idx, candidates.length - 1)];
   return (
     <motion.img
       {...motionProps}
-      src={src}
+      src={candidates[Math.min(idx, candidates.length - 1)]}
       alt={alt}
       className={className}
-      onError={() => setIdx((i) => i + 1)} // try next url when failed
-      onLoad={() => console.debug("🖼 loaded:", src)}
+      onError={() => setIdx((i) => i + 1)}
     />
   );
 };
@@ -75,39 +71,24 @@ const GameIntroductionPage: React.FC = () => {
   useEffect(() => {
     const fetchIntro = async () => {
       try {
-        const response = await axiosInstance.get("/News", {
-          params: { category: 1 }, // ✅ đúng theo Swagger
+        const { data } = await axiosInstance.get("/News", {
+          params: { category: 1 },
         });
 
-        console.log("✅ API DATA:", response.data);
-
-        // Chuẩn hoá ảnh: ưu tiên imageUrls[0] nếu có
-        const processed: NewsItem[] = (response.data || []).map((it: any) => ({
+        const processed = (data || []).map((it: any) => ({
           id: it.id,
           title: it.title,
           content: it.content,
-          imageUrl:
-            it.imageUrls && it.imageUrls.length > 0
-              ? it.imageUrls[0].url
-              : null,
+          imageUrl: it.imageUrls?.[0]?.url || null,
         }));
 
-        setNews(processed);
-
-        setNews(processed);
-
-        // Chỉ hiển thị bài có ảnh để không vỡ layout
-        const filtered = processed.filter(
-          (x) => x.imageUrl && x.imageUrl !== ""
-        );
-        setNews(filtered);
-      } catch (error) {
-        console.error("❌ Error fetching game intro:", error);
+        setNews(processed.filter((item) => item.imageUrl));
+      } catch (err) {
+        console.error("❌ Error:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchIntro();
   }, []);
 
@@ -117,9 +98,7 @@ const GameIntroductionPage: React.FC = () => {
 
   const handleCardClick = (id: number) => {
     setClickedId(id);
-    setTimeout(() => {
-      navigate(`/game-introduction/${id}`);
-    }, 300);
+    setTimeout(() => navigate(`/game-introduction/${id}`), 300);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -136,35 +115,27 @@ const GameIntroductionPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden text-white font-['Cinzel',serif] pt-28 pb-32">
-      {/* BACKGROUND */}
+      {/* Background */}
       <div
         className="absolute inset-0 -z-20 bg-cover bg-center brightness-[0.55]"
         style={{ backgroundImage: `url(${BackGround})` }}
       />
       <div className="absolute inset-0 -z-10 bg-black/55" />
-
-      {/* Gradient nối header */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
 
-      {/* Gradient nối header */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />
-
-      {/* Nội dung */}
       <main className="max-w-7xl mx-auto py-20 px-6 flex-grow relative z-10">
         <motion.h1
           className="text-5xl md:text-6xl font-extrabold text-center mb-14
-                   bg-gradient-to-b from-yellow-200 to-yellow-600 bg-clip-text
-                   text-transparent drop-shadow-[0_0_35px_rgba(255,230,150,0.55)]"
+          bg-gradient-to-b from-yellow-200 to-yellow-600 bg-clip-text
+          text-transparent drop-shadow-[0_0_35px_rgba(255,230,150,0.55)]"
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
         >
           GIỚI THIỆU GAME
         </motion.h1>
 
         {loading ? (
-          // Skeleton khi tải
-          <div className="space-y-8">
+          <div className="space-y-10">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
@@ -172,45 +143,41 @@ const GameIntroductionPage: React.FC = () => {
               />
             ))}
           </div>
-        ) : currentData.length === 0 ? (
-          <p className="text-center text-lg text-gray-300">
-            Không có dữ liệu nào.
-          </p>
         ) : (
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={page}
-              className="flex flex-col gap-16 md:gap-20"
+              className="flex flex-col gap-16"
               custom={direction}
               initial="enter"
               animate="center"
               exit="exit"
               variants={variants}
-              transition={{ type: "spring", stiffness: 150, damping: 20 }}
             >
               {currentData.map((item, index) => (
                 <motion.div
                   key={item.id}
                   onClick={() => handleCardClick(item.id)}
-                  className="relative rounded-3xl p-8 bg-white/5 backdrop-blur-md border border-[rgba(255,255,255,0.25)]
-                             shadow-[inset_0_0_10px_rgba(255,255,255,0.05)] cursor-pointer group
-                             transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)] hover:scale-[1.02]"
+                  className="relative overflow-hidden rounded-3xl p-10 bg-white/5 backdrop-blur-md
+                  border border-[rgba(255,255,255,0.25)]
+                  shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]
+                  cursor-pointer transition-all duration-500
+                  hover:shadow-[0_0_35px_rgba(255,255,255,0.2)] hover:scale-[1.02]
+                  max-w-[1250px] xl:max-w-[1350px] mx-auto"
                   animate={
                     clickedId === item.id
                       ? { scale: 1.1, opacity: 0 }
                       : { scale: 1, opacity: 1 }
                   }
-                  transition={{ type: "spring", stiffness: 180, damping: 15 }}
                 >
-                  <section className="grid md:grid-cols-2 gap-10 items-center relative z-10">
+                  <section className="grid md:grid-cols-2 gap-10">
                     <SmartImage
                       raw={item.imageUrl}
                       alt={item.title}
-                      className={`rounded-2xl w-full h-80 object-cover shadow-lg ${
+                      className={`rounded-2xl w-full aspect-[16/9] object-cover shadow-lg ${
                         index % 2 === 1 ? "md:order-2" : ""
                       }`}
                       motionProps={{
-                        loading: "lazy",
                         initial: { opacity: 0.6, scale: 0.97 },
                         animate: { opacity: 1, scale: 1 },
                         transition: { duration: 0.6 },
@@ -218,20 +185,19 @@ const GameIntroductionPage: React.FC = () => {
                     />
 
                     <div
-                      className={`p-8 rounded-2xl bg-gradient-to-br from-[#1f2e27]/70 to-[#2f3d32]/60 backdrop-blur-md
-                                  border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]
-                                  ${index % 2 === 1 ? "md:order-1" : ""}`}
+                      className={`p-8 rounded-2xl bg-gradient-to-br from-[#1f2e27]/70 to-[#2f3d32]/60
+                      border border-[rgba(255,255,255,0.25)] shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]
+                      ${index % 2 === 1 ? "md:order-1" : ""}`}
                     >
-                      <h2 className="font-bold text-3xl mb-4 text-[#f8f5d2] drop-shadow-[0_0_10px_rgba(255,250,200,0.4)]">
+                      <h2 className="font-bold text-3xl mb-4 text-[#f8f5d2]">
                         {item.title?.toUpperCase()}
                       </h2>
-                      <p className="leading-relaxed text-[#eae6d8] line-clamp-3">
+                      <p className="text-[#eae6d8] line-clamp-3">
                         {item.content}
                       </p>
                       <motion.p
-                        className="mt-6 text-right text-[#d8c87a] font-semibold underline decoration-[#f5e1a4]/50 hover:text-[#fff5c0]"
+                        className="mt-6 text-right text-[#d8c87a] underline hover:text-[#fff5c0]"
                         whileHover={{ x: 5 }}
-                        transition={{ type: "spring", stiffness: 200 }}
                       >
                         Xem chi tiết →
                       </motion.p>
