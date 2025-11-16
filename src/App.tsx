@@ -30,22 +30,28 @@ import PurchasePage from "./pages/Payment/PurchasePage.tsx";
 import PaymentSuccessPage from "./pages/Payment/PaymentSuccessPage.tsx";
 import PaymentCancelPage from "./pages/Payment/PaymentCancelPage.tsx";
 import ProductManager from "./pages/Admin/AdminManager/ProductManager.tsx";
-import { ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
+import OrderHistoryPage from "./pages/history/OrderHistoryPage.tsx";
+import { ToastContainer } from "react-toastify";
+import Character from "./pages/Characters/Characters.tsx";
 
 const App: React.FC = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
   const [isForgotOpen, setForgotOpen] = useState(false);
-  <ToastContainer />;
+
   return (
     <GoogleOAuthProvider clientId="467475853265-i7sdj6otkta2r2o6mpbe1lc8rosea8ep.apps.googleusercontent.com">
+      <ToastContainer position="top-right" autoClose={2500} />
       <CustomCursor />
       <BrowserRouter>
         <Routes>
           {/* --- USER ROUTES --- */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
+            <Route path="character" element={<Character />} />{" "}
+            {/* ✅ THÊM Ở ĐÂY */}
             <Route path="gameintroduction" element={<GameIntroductionPage />} />
             <Route
               path="systemrequirements"
@@ -66,7 +72,6 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
-
             {/* 🪙 ROUTES THANH TOÁN */}
             <Route
               path="purchase"
@@ -76,10 +81,16 @@ const App: React.FC = () => {
                 </PrivateRoute>
               }
             />
-
+            <Route
+              path="order-history"
+              element={
+                <PrivateRoute role="Player">
+                  <OrderHistoryPage />
+                </PrivateRoute>
+              }
+            />
             <Route path="payment-success" element={<PaymentSuccessPage />} />
             <Route path="payment-cancel" element={<PaymentCancelPage />} />
-
             {/* fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Route>

@@ -17,11 +17,10 @@ const ContactPage: React.FC = () => {
     <div className="relative min-h-screen flex flex-col overflow-hidden text-white font-['Cinzel',serif] pt-28 pb-32">
       {/* 🌌 Background giống NewsPage */}
       <div
-        className="absolute inset-0 -z-10 bg-cover bg-center opacity-70 blur-[2px] brightness-[0.85]"
+        className="absolute inset-0 -z-20 bg-cover bg-center brightness-[0.55]"
         style={{ backgroundImage: `url(${BackGround})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,220,0.05)] to-[rgba(0,0,0,0.3)]"></div>
-      </div>
+      />
+      <div className="absolute inset-0 -z-10 bg-black/55" />
 
       {/* 🌫️ Gradient header nối */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0b2239]/90 to-transparent z-0" />

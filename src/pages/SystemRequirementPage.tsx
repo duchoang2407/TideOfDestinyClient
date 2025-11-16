@@ -2,6 +2,8 @@ import React from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import axiosInstance from "../component/config/axiosConfig";
 
 const SystemRequirementPage: React.FC = () => {
@@ -21,13 +23,17 @@ const SystemRequirementPage: React.FC = () => {
       const hasPurchased = res.data?.hasPurchased ?? res.data?.HasPurchased;
 
       if (!hasPurchased) {
-        alert("⚠️ Bạn chưa mua game. Mua ngay để tải!");
-        navigate("/purchase");
+        toast.warning("Bạn chưa mua game. Mua ngay để tải!");
+        setTimeout(() => {
+          navigate("/purchase");
+        }, 2500);
         return;
       }
 
-      const url = "https://localhost:44333/api/Download/donwload-lastest-file";
-      const response = await fetch(url);
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/api/Download/donwload-lastest-file`;
+      const response = await fetch(url, { method: "GET" });
 
       if (!response.ok) throw new Error("Download failed");
 
