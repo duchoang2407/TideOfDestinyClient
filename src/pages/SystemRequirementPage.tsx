@@ -13,13 +13,14 @@ const handleDownloadClick = async () => {
   try {
     const token = localStorage.getItem("token");
 
+    // Must login
     if (!token) {
       alert("Bạn cần đăng nhập để tải game.");
       navigate("/login");
       return;
     }
 
-    // Check purchase status
+    // Must purchase
     const res = await axiosInstance.get("/payment/purchase-status");
     const hasPurchased = res.data?.hasPurchased ?? res.data?.HasPurchased;
 
@@ -31,29 +32,23 @@ const handleDownloadClick = async () => {
       return;
     }
 
-    // Download file using axios instead of fetch
-    //const url = `${import.meta.env.VITE_API_URL}/Download/donwload-lastest-file`;
-
-    const response = await axiosInstance.get("/Download/donwload-lastest-file", {
-      responseType: "blob", // IMPORTANT for downloading binary file
-    });
-
-    const blob = new Blob([response.data]);
-    const blobUrl = window.URL.createObjectURL(blob);
+    // ⭐ DIRECT BROWSER DOWNLOAD (no axios blob)
+    const downloadUrl =
+      `${import.meta.env.VITE_API_BASE_URL}/Download/donwload-lastest-file`;
 
     const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = "TideOfDestiny.zip";
+    link.href = downloadUrl;
+    link.setAttribute("download", "TideOfDestiny.zip");
+    document.body.appendChild(link);
     link.click();
     link.remove();
 
-    window.URL.revokeObjectURL(blobUrl);
-
   } catch (err) {
-    console.error(err);
+    console.error("Unexpected error:", err);
     alert("Không thể tải game. Vui lòng thử lại!");
   }
 };
+
 
   const data = [
     { category: "OS", min: "Windows 10 (64-bit)", rec: "Windows 11 (64-bit)" },

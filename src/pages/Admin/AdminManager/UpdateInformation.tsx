@@ -31,11 +31,6 @@ interface Post {
   authorname: string;
 }
 
-interface FileItem {
-  id: string;
-  fileName: string;
-}
-
 interface Product {
   id: string;
   name: string;
@@ -55,7 +50,7 @@ const UpdateInformation: React.FC = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   /* ------------- FILES ------------- */
-  const [files, setFiles] = useState<FileItem[]>([]);
+  const [files, setFiles] = useState<any[]>([]);
   const [fileUpload, setFileUpload] = useState<File | null>(null);
 
   /* ------------- PRODUCTS CRUD ------------- */
@@ -71,23 +66,46 @@ const UpdateInformation: React.FC = () => {
   }, []);
 
   const fetchPosts = async () => {
-    const res = await axiosInstance.get("/News");
-    setPosts(res.data.filter((p: Post) => p.newsCategory === 0));
+    try {
+      const res = await axiosInstance.get("/News");
+      setPosts(res.data.filter((p: Post) => p.newsCategory === 0));
+    } catch (error) {
+      setPosts([]);
+      toast.error("Failed to load updates");
+    }
   };
 
   const fetchFiles = async () => {
-    const res = await axiosInstance.get("/FileGame");
-    setFiles(res.data);
-  };
-  const deleteFile = async (id: string) => {
-    await axiosInstance.delete(`/FileGame/${id}`);
-    fetchFiles();
-    toast.success("🗑 File deleted!");
+    try {
+      const res = await axiosInstance.get("/Upload");
+      
+      // Handle different response structures
+      let fileData = [];
+      if (Array.isArray(res.data)) {
+        fileData = res.data;
+      } else if (res.data?.$values) {
+        fileData = res.data.$values;
+      } else if (res.data?.file) {
+        fileData = res.data.file;
+      } else if (res.data?.files) {
+        fileData = res.data.files;
+      } else if (res.data?.data) {
+        fileData = res.data.data;
+      }
+      
+      setFiles(fileData);
+    } catch (error) {
+      setFiles([]);
+    }
   };
 
   const fetchProducts = async () => {
-    const res = await axiosInstance.get("/Products");
-    setProducts(res.data);
+    try {
+      const res = await axiosInstance.get("/Products");
+      setProducts(res.data);
+    } catch (error) {
+      setProducts([]);
+    }
   };
 
   /* ✅ ADD / EDIT / DELETE PRODUCTS */
@@ -195,7 +213,10 @@ const UpdateInformation: React.FC = () => {
   fileUpload={fileUpload}
   setFileUpload={setFileUpload}
   handleUploadFile={async () => {
-    if (!fileUpload) return;
+    if (!fileUpload) {
+      toast.warning("Please select a file first!");
+      return;
+    }
 
     try {
       const form = new FormData();
@@ -203,19 +224,18 @@ const UpdateInformation: React.FC = () => {
 
       await axiosInstance.post("/Upload/file", form, {
         headers: {
-          "Content-Type": "multipart/form-data",  // ⭐ FIX 415
+          "Content-Type": "multipart/form-data",
         },
       });
 
       fetchFiles();
-      toast.success("✅ Uploaded!");
+      setFileUpload(null);
+      toast.success("✅ File uploaded successfully!");
     } catch (err) {
-      console.error(err);
-      toast.error("❌ Upload thất bại (415) – kiểm tra lại API!");
+      toast.error("❌ Upload failed. Please try again!");
     }
   }}
   files={files}
-  deleteFile={deleteFile}
 />
 
           {/* ✅ Product List & Add */}
@@ -437,7 +457,6 @@ const UploadFileSection = ({
   setFileUpload,
   handleUploadFile,
   files,
-  deleteFile,
 }: any) => (
   <motion.div className="bg-white p-6 rounded-2xl shadow-md border">
     <h3 className="font-semibold text-lg mb-4">📁 Upload Game File</h3>
@@ -460,20 +479,22 @@ const UploadFileSection = ({
       <thead className="bg-gray-100">
         <tr>
           <th className="p-3">File name</th>
-          <th className="p-3 text-center">Action</th>
         </tr>
       </thead>
       <tbody>
-        {files.map((f: FileItem) => (
-          <tr key={f.id} className="border-b hover:bg-orange-50">
-            <td className="p-3">{f.fileName}</td>
-            <td className="p-3 text-center">
-              <button className="text-red-600" onClick={() => deleteFile(f.id)}>
-                <Trash2 size={18} />
-              </button>
+        {files && files.length > 0 ? (
+          files.map((f: any, index: number) => (
+            <tr key={f.key || f.id || f.fileId || index} className="border-b hover:bg-orange-50">
+              <td className="p-3">{f.key || f.fileName || f.name || f.file || 'Unknown file'}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className="p-3 text-gray-400 text-center">
+              {files === null ? 'Loading...' : 'No files uploaded yet'}
             </td>
           </tr>
-        ))}
+        )}
       </tbody>
     </table>
   </motion.div>
