@@ -191,20 +191,32 @@ const UpdateInformation: React.FC = () => {
 
         {/* ✅ Upload Game + Products Section SONG SONG */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <UploadFileSection
-            fileUpload={fileUpload}
-            setFileUpload={setFileUpload}
-            handleUploadFile={async () => {
-              if (!fileUpload) return;
-              const form = new FormData();
-              form.append("file", fileUpload);
-              await axiosInstance.post("/FileGame", form);
-              fetchFiles();
-              toast.success("✅ Uploaded!");
-            }}
-            files={files}
-            deleteFile={deleteFile}
-          />
+<UploadFileSection
+  fileUpload={fileUpload}
+  setFileUpload={setFileUpload}
+  handleUploadFile={async () => {
+    if (!fileUpload) return;
+
+    try {
+      const form = new FormData();
+      form.append("file", fileUpload);
+
+      await axiosInstance.post("/Upload/file", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",  // ⭐ FIX 415
+        },
+      });
+
+      fetchFiles();
+      toast.success("✅ Uploaded!");
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Upload thất bại (415) – kiểm tra lại API!");
+    }
+  }}
+  files={files}
+  deleteFile={deleteFile}
+/>
 
           {/* ✅ Product List & Add */}
           <motion.div className="bg-white p-6 rounded-2xl shadow-md border">

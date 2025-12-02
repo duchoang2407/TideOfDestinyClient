@@ -9,47 +9,51 @@ import axiosInstance from "../component/config/axiosConfig";
 const SystemRequirementPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleDownloadClick = async () => {
-    try {
-      const token = localStorage.getItem("token");
+const handleDownloadClick = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-      if (!token) {
-        alert("Bạn cần đăng nhập để tải game.");
-        navigate("/login");
-        return;
-      }
-
-      const res = await axiosInstance.get("/payment/purchase-status");
-      const hasPurchased = res.data?.hasPurchased ?? res.data?.HasPurchased;
-
-      if (!hasPurchased) {
-        toast.warning("Bạn chưa mua game. Mua ngay để tải!");
-        setTimeout(() => {
-          navigate("/purchase");
-        }, 2500);
-        return;
-      }
-
-      const url = `${
-        import.meta.env.VITE_API_URL
-      }/api/Download/donwload-lastest-file`;
-      const response = await fetch(url, { method: "GET" });
-
-      if (!response.ok) throw new Error("Download failed");
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = "TideOfDestiny.zip";
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error(err);
-      alert("Không thể tải game. Vui lòng thử lại!");
+    if (!token) {
+      alert("Bạn cần đăng nhập để tải game.");
+      navigate("/login");
+      return;
     }
-  };
+
+    // Check purchase status
+    const res = await axiosInstance.get("/payment/purchase-status");
+    const hasPurchased = res.data?.hasPurchased ?? res.data?.HasPurchased;
+
+    if (!hasPurchased) {
+      toast.warning("Bạn chưa mua game. Mua ngay để tải!");
+      setTimeout(() => {
+        navigate("/purchase");
+      }, 2500);
+      return;
+    }
+
+    // Download file using axios instead of fetch
+    //const url = `${import.meta.env.VITE_API_URL}/Download/donwload-lastest-file`;
+
+    const response = await axiosInstance.get("/Download/donwload-lastest-file", {
+      responseType: "blob", // IMPORTANT for downloading binary file
+    });
+
+    const blob = new Blob([response.data]);
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = "TideOfDestiny.zip";
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
+
+  } catch (err) {
+    console.error(err);
+    alert("Không thể tải game. Vui lòng thử lại!");
+  }
+};
 
   const data = [
     { category: "OS", min: "Windows 10 (64-bit)", rec: "Windows 11 (64-bit)" },
